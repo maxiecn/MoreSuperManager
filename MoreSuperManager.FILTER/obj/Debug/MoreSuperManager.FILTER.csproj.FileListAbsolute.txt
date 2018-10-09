@@ -1,0 +1,12 @@
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\MoreSuperManager.FILTER.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\MoreSuperManager.FILTER.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\MoreSuperManager.MODEL.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\Helper.Core.Library.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\Quartz.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\Common.Logging.Core.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\Common.Logging.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\MoreSuperManager.MODEL.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\bin\Debug\Helper.Core.Library.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\obj\Debug\MoreSuperManager.FILTER.csprojResolveAssemblyReference.cache
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\obj\Debug\MoreSuperManager.FILTER.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.FILTER\obj\Debug\MoreSuperManager.FILTER.pdb
