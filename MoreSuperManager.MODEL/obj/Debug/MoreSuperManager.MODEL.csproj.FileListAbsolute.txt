@@ -1,0 +1,10 @@
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\obj\Debug\MoreSuperManager.MODEL.csprojResolveAssemblyReference.cache
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\MoreSuperManager.MODEL.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\MoreSuperManager.MODEL.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\Helper.Core.Library.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\Quartz.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\Common.Logging.Core.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\Common.Logging.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\bin\Debug\Helper.Core.Library.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\obj\Debug\MoreSuperManager.MODEL.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.MODEL\obj\Debug\MoreSuperManager.MODEL.pdb

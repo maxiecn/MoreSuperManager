@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{9A4638C7-89C8-41E1-9702-A1C1A9621996}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MoreSuperManager.MODEL</RootNamespace>
+    <AssemblyName>MoreSuperManager.MODEL</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DBActionTypeModel.cs" />
+    <Compile Include="DBApplicationModel.cs" />
+    <Compile Include="DBAttachmentModel.cs" />
+    <Compile Include="DBChannelModel.cs" />
+    <Compile Include="DBFlowFullModel.cs" />
+    <Compile Include="DBFlowModel.cs" />
+    <Compile Include="DBFlowStepModel.cs" />
+    <Compile Include="DBFlowSymbolTypeModel.cs" />
+    <Compile Include="DBFlowTypeModel.cs" />
+    <Compile Include="DBIndexMapperFullModel.cs" />
+    <Compile Include="DBIndexMapperModel.cs" />
+    <Compile Include="DBKeyValueModel.cs" />
+    <Compile Include="DBLinkFriendFullModel.cs" />
+    <Compile Include="DBLinkFriendModel.cs" />
+    <Compile Include="DBLinkFriendTypeFullModel.cs" />
+    <Compile Include="DBLinkFriendTypeModel.cs" />
+    <Compile Include="DBMenuFullModel.cs" />
+    <Compile Include="DBMenuModel.cs" />
+    <Compile Include="DBMessageFullModel.cs" />
+    <Compile Include="DBMessageModel.cs" />
+    <Compile Include="DBMessageReplyModel.cs" />
+    <Compile Include="DBModuleFullModel.cs" />
+    <Compile Include="DBModuleModel.cs" />
+    <Compile Include="DBNoticeFullModel.cs" />
+    <Compile Include="DBNoticeModel.cs" />
+    <Compile Include="DBNoticeTypeFullModel.cs" />
+    <Compile Include="DBNoticeTypeModel.cs" />
+    <Compile Include="DBProjectFullModel.cs" />
+    <Compile Include="DBProjectModel.cs" />
+    <Compile Include="DBProjectTypeModel.cs" />
+    <Compile Include="DBRoleFullModel.cs" />
+    <Compile Include="DBRoleModel.cs" />
+    <Compile Include="DBTopicFullModel.cs" />
+    <Compile Include="DBTopicModel.cs" />
+    <Compile Include="DBTopicPositionTypeFullModel.cs" />
+    <Compile Include="DBTopicPositionTypeModel.cs" />
+    <Compile Include="DBTopicTypeFullModel.cs" />
+    <Compile Include="DBTopicTypeModel.cs" />
+    <Compile Include="DBUserFullModel.cs" />
+    <Compile Include="DBUserLogModel.cs" />
+    <Compile Include="DBUserModel.cs" />
+    <Compile Include="DBVoteFullModel.cs" />
+    <Compile Include="DBVoteItemModel.cs" />
+    <Compile Include="DBVoteModel.cs" />
+    <Compile Include="DBVoteTextModel.cs" />
+    <Compile Include="DBVoteTypeModel.cs" />
+    <Compile Include="IChannelModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewInitMenuItemModel.cs" />
+    <Compile Include="ViewInitMenuModel.cs" />
+    <Compile Include="ViewPageModel.cs" />
+    <Compile Include="ViewSettingModel.cs" />
+    <Compile Include="ViewTreeMenuModel.cs" />
+    <Compile Include="ViewTreeTopicTypeModel.cs" />
+    <Compile Include="ViewUserModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Helper.Core.Library\Helper.Core.Library.csproj">
+      <Project>{8d52f0ba-e8f6-4cd5-bd16-bf32ba18e9e5}</Project>
+      <Name>Helper.Core.Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
