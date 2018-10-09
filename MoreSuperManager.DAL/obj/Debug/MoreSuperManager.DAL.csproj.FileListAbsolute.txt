@@ -1,0 +1,14 @@
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\MoreSuperManager.DAL.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\MoreSuperManager.DAL.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\Helper.Core.Library.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\MoreSuperManager.MODEL.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\Quartz.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\Common.Logging.Core.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\Common.Logging.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\Helper.Core.Library.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\MoreSuperManager.MODEL.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\obj\Debug\MoreSuperManager.DAL.csprojResolveAssemblyReference.cache
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\obj\Debug\MoreSuperManager.DAL.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\obj\Debug\MoreSuperManager.DAL.pdb
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\MoreSuperManager.ENUM.dll
+E:\GitProject\MoreSuperManager\MoreSuperManager.DAL\bin\Debug\MoreSuperManager.ENUM.pdb
