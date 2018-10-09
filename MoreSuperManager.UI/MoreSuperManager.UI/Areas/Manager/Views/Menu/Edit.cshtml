@@ -134,7 +134,7 @@
         var moduleJsonText = "@Html.Raw(ViewBag.ModuleJsonText)";
         var moduleJsonData = JSON.parse(moduleJsonText);
 
-        var actionTypeJsonText = "@Html.Action("GetActionTypeJsonText")";
+        var actionTypeJsonText = "@Html.Raw(ViewBag.ActionTypeJsonText)";
         var actionTypeJsonData = JSON.parse(actionTypeJsonText);
     </script>
 }

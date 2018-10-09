@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <settings>
   <!--管理后台版本-->
-  <item name="version" value="1.0.0.7" />
+  <item name="version" value="1.0.0.1" />
   <!--管理后台 Title 显示-->
   <item name="managerTitle" value="信息管理系统界面" />
   <!--管理后台分页页大小-->

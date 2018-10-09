@@ -1,5 +1,9 @@
 ﻿$(function () {
 
+    $("#channelCode").change(function () {
+        SetMenuListGetJsonData(noticeTypeJsonData, $(this).val(), "noticeType");
+    });
+
     CKEDITOR.replace("noticeContent", {
         allowedContent: true,
         filebrowserUploadUrl: uploadFilePath,

@@ -121,6 +121,47 @@ namespace MoreSuperManager.UI
             stringBuilder.Append("}");
             return stringBuilder.ToString();
         }
+        public static string GetJsonText(Dictionary<int, List<DBKeyValueModel>> KeyValueDict)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("{");
+
+            if (KeyValueDict != null && KeyValueDict.Count > 0)
+            {
+                int typeIndex = 0;
+                foreach (KeyValuePair<int, List<DBKeyValueModel>> keyValueItem in KeyValueDict)
+                {
+                    stringBuilder.Append("\\\"");
+                    stringBuilder.Append(keyValueItem.Key);
+                    stringBuilder.Append("\\\":[");
+
+                    List<DBKeyValueModel> keyValueList = keyValueItem.Value;
+                    int keyValueCount = keyValueList.Count;
+                    for (int index = 0; index < keyValueCount; index++)
+                    {
+                        stringBuilder.Append("{\\\"key\\\":\\\"");
+                        stringBuilder.Append(keyValueList[index].Key);
+                        stringBuilder.Append("\\\",\\\"value\\\":\\\"");
+                        stringBuilder.Append(keyValueList[index].Value);
+                        stringBuilder.Append("\\\"}");
+                        if (index < keyValueCount - 1)
+                        {
+                            stringBuilder.Append(",");
+                        }
+                    }
+
+                    stringBuilder.Append("]");
+                    if (typeIndex < KeyValueDict.Count - 1)
+                    {
+                        stringBuilder.Append(",");
+                    }
+                    typeIndex++;
+                }
+            }
+
+            stringBuilder.Append("}");
+            return stringBuilder.ToString();
+        }
         public static List<DBKeyValueModel> GetChannelKeyValueList<T>(List<DBChannelModel> channelModelList, List<T> modelList, string channelCode, Func<T, object> keyFunc, Func<T, string> valueFunc) where T : IChannelModel
         {
             List<DBKeyValueModel> resultList = new List<DBKeyValueModel>();

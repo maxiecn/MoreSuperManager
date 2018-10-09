@@ -9,10 +9,24 @@
 <div class="operater">
     <form id="operaterForm" action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = Model != null ? Model.IdentityID : 0 })" class="form-horizontal" method="post">
         @Html.AntiForgeryToken()
+        @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+        {
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">所属频道：</label>
+                <div class="col-xs-10 form-cell">
+                    <select class="form-control" style="width:200px;" name="channelCode" id="channelCode">
+                        @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                        {
+                            <option value="@modelItem.ChannelCode" @(Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
         <div class="form-group">
             <label class="col-xs-2 control-label form-label">公告类别：</label>
             <div class="col-xs-10 form-cell">
-                <select class="form-control" style="width:400px;" name="noticeType">
+                <select class="form-control" style="width:400px;" name="noticeType" id="noticeType">
                     @if (ViewBag.NoticeTypeList != null && ViewBag.NoticeTypeList.Count > 0)
                     {
                         foreach (DBNoticeTypeModel modelItem in ViewBag.NoticeTypeList)
@@ -54,6 +68,9 @@
         var uploadFilePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.FILE, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
         var uploadImagePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.IMAGE, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
         var uploadVideoPath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.VIDEO, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    
+        var noticeTypeJsonText = "@Html.Raw(ViewBag.NoticeTypeJsonText)";
+        var noticeTypeJsonData = JSON.parse(noticeTypeJsonText);
     </script>   
 }
 

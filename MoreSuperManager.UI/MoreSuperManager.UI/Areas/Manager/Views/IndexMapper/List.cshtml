@@ -1,6 +1,6 @@
 ﻿@using MoreSuperManager.MODEL
 @using Helper.Core.Library
-@model List<DBIndexMapperModel>
+@model List<DBIndexMapperFullModel>
 
 @{
     ViewBag.Title = "List";
@@ -14,7 +14,7 @@
                 <button type="button" id="toolbarAdd" style="margin-right:5px;" class="btn btn-info"><i class="glyphicon glyphicon-plus" style="font-size:12px;padding-right : 10px;"></i>添加</button>
                 <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
             </div>
-            <div class="input-group pull-right" style="padding:0px;width:400px;">
+            <div class="input-group pull-right" style="padding:0px;width:@((ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0) ? 500 : 400)px;">
                 <span class="input-group-btn" style="width : 135px;">
                     <select class="form-control" name="indexType">
                         <option value="-1" selected>选择类别</option>
@@ -27,6 +27,18 @@
                         }
                     </select>
                 </span>
+                @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+                {
+                    <span class="input-group-btn" style="width:135px;">
+                        <select class="form-control" name="channelCode">
+                            <option value="-1">选择频道信息</option>
+                            @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                            {
+                                <option value="@modelItem.ChannelCode" @Html.Raw(ViewData["ChannelCode"] != null && ViewData["ChannelCode"].ToString() == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                            }
+                        </select>
+                    </span>
+                }
                 <span class="input-group-btn">
                     <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-search"></span><i style="margin-left:10px;font-style:normal;">搜索</i></button>
                 </span>
@@ -45,13 +57,14 @@
                             <th>模块</th>
                             <th>栏目</th>
                             <th>对应编号</th>
+                            <th>所属频道</th>
                             <th>操作</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (Model != null && Model.Count > 0)
                         {
-                            foreach (DBIndexMapperModel modelItem in Model)
+                            foreach (DBIndexMapperFullModel modelItem in Model)
                             {
                                 <tr id="@modelItem.IdentityID">
                                     <td class="first">
@@ -60,6 +73,7 @@
                                     <td>@ConstHelper.GetIndexMapperName(modelItem.IndexType)</td>
                                     <td>@ConstHelper.GetIndexMapperName(modelItem.IndexType, modelItem.IndexID)</td>
                                     <td>@modelItem.MapperID</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</td>
                                     <td>
                                         <a data-id="@modelItem.IdentityID" class="operater-edit"><i class="glyphicon glyphicon-edit list-oper-button"></i>编辑</a>
                                         <a data-id="@modelItem.IdentityID" class="operater-delete"><i class="glyphicon glyphicon-trash list-oper-pad-button"></i>删除</a>

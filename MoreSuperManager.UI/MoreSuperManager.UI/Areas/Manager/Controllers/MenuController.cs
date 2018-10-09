@@ -63,6 +63,8 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             ViewBag.ModuleJsonText = this.GetModuleJsonText(channelModelList, moduleModelList);
             ViewBag.ModuleList = moduleList;
 
+            ViewBag.ActionTypeJsonText = this.GetActionTypeJsonText();
+
             if (model != null && !string.IsNullOrEmpty(model.BelongModule) && moduleList.Count > 0)
             {
                 DBModuleModel moduleModel = moduleList.Where(p => p.ModuleCode == model.BelongModule).FirstOrDefault();
@@ -136,10 +138,10 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return model.ModuleName;
             }, true, null, new DBKeyValueModel() { Key = "-1", Value = "无" });
         }
-        public ActionResult GetActionTypeJsonText()
+        private string GetActionTypeJsonText()
         {
             List<DBModuleModel> moduleList = DALFactory.Module.List();
-            if (moduleList == null) return this.Content("{}");
+            if (moduleList == null) return "{}";
 
             List<DBActionTypeModel> actionList = DALFactory.ActionType.List();
 
@@ -184,7 +186,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
             stringBuilder.Append("}");
 
-            return this.Content(stringBuilder.ToString());
+            return stringBuilder.ToString();
         }
         #endregion
 

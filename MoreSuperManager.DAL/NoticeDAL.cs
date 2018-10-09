@@ -34,14 +34,20 @@ namespace MoreSuperManager.DAL
         }
         public DBNoticeModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBNoticeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.NoticeType, p.NoticeTitle, p.NoticeContent }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBNoticeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.NoticeType, p.NoticeTitle, p.NoticeContent, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
-        public List<DBNoticeFullModel> Page(string searchKey, int noticeType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBNoticeFullModel> Page(string channelCode, string searchKey, int noticeType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
             StringBuilder stringBuilder = new StringBuilder();
 
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(string.Format(" NoticeTitle like '%{0}%' ", searchKey));
@@ -57,8 +63,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, (select TypeName from T_NoticeType with(nolock) where T_NoticeType.IdentityID=T.NoticeType) as NoticeTypeName");
-            parameterList.Add("@Field", "IdentityID, NoticeType, NoticeTitle, NoticeDateTime");
+            parameterList.Add("@FieldSql", "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, ChannelCode, (select TypeName from T_NoticeType with(nolock) where T_NoticeType.IdentityID=T.NoticeType) as NoticeTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, ChannelCode");
             parameterList.Add("@TableName", "T_Notice");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);

@@ -38,9 +38,9 @@ namespace MoreSuperManager.DAL
         }
         public List<DBIndexMapperModel> List()
         {
-            return DataBaseHelper.More<DBIndexMapperModel>(null, p => new { p.IdentityID, p.IndexType, p.IndexID }, null, null, true, TABLE_NAME);
+            return DataBaseHelper.More<DBIndexMapperModel>(null, p => new { p.IdentityID, p.IndexType, p.IndexID, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
-        public List<DBIndexMapperModel> Page(string channelCode, int indexType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBIndexMapperFullModel> Page(string channelCode, int indexType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
@@ -67,7 +67,7 @@ namespace MoreSuperManager.DAL
             parameterList.Add("@WhereSql", whereSql);
             parameterList.Add("@OrderSql", "IdentityID desc");
 
-            return DataBaseHelper.ToEntityList<DBIndexMapperModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBIndexMapperFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

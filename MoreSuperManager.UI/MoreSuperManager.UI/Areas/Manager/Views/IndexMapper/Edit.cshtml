@@ -8,6 +8,24 @@
 <div class="operater">
     <form id="submitForm" action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = (Model != null ? Model.IdentityID : 0) })" class="form-horizontal" method="post">
         @Html.AntiForgeryToken()
+        @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+        {
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">所属频道：</label>
+                <div class="col-xs-10 form-cell">
+                    <select class="form-control" style="width:200px;" name="channelCode" id="channelCode">
+                        @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                        {
+                            <option value="@modelItem.ChannelCode" @(Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        else
+        {
+            <input type="hidden" id="channelCode" name="channelCode" value="@ViewBag.ChannelCode" />
+        }
         <div class="form-group">
             <label class="col-xs-2 control-label form-label">所属模块：</label>
             <div class="col-xs-10 form-cell">
@@ -64,10 +82,10 @@
 {
     <script type="text/javascript" src="~/JavaScripts/module/IndexMapper/edit.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript">
-        var indexJsonText = "@Html.Action("GetIndexJsonText")";
+        var indexJsonText = "@Html.Raw(ViewBag.IndexJsonText)";
         var indexJsonData = JSON.parse(indexJsonText);
 
-        var indexMapperText = "@Html.Action("GetMapperJsonText")";
-        var indexMapperData = JSON.parse(indexMapperText);
+        var mapperJsonText = "@Html.Raw(ViewBag.MapperJsonText)";
+        var mapperJsonData = JSON.parse(mapperJsonText);
     </script>
 }

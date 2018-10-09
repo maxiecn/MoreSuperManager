@@ -36,8 +36,26 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
-            ViewBag.NoticeTypeList = DALFactory.NoticeType.List();
-            return View("Edit", identityID > 0 ? DALFactory.Notice.Select(identityID) : null);
+            DBNoticeModel model = identityID > 0 ? DALFactory.Notice.Select(identityID) : null;
+
+            string channelCode = null;
+            List<DBChannelModel> channelModelList = null;
+
+            this.InitChannelViewData<DBNoticeModel>(model, (p, k) =>
+            {
+                channelCode = p;
+                channelModelList = k;
+            }, () =>
+            {
+                return DALFactory.Channel.ChannelList();
+            });
+
+            List<DBNoticeTypeModel> noticeTypeModelList = DALFactory.NoticeType.List();
+
+            ViewBag.NoticeTypeJsonText = this.GetNoticeTypeJsonText(channelModelList, noticeTypeModelList);
+            ViewBag.NoticeTypeList = noticeTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+
+            return View("Edit", model);
         }
 
         [RoleActionFilter]
@@ -90,6 +108,8 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [NonAction]
         private ActionResult AddOrEditOperater(DBNoticeModel model)
         {
+            this.SetChannelCode<DBNoticeModel>(model);
+
             return this.OperaterConfirm(() =>
             {
                 return FilterFactory.Notice.Operater(model);
@@ -101,6 +121,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         private List<DBKeyValueModel> InitNoticeTypeKeyValueList(List<DBNoticeTypeModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
         {
             return ConstHelper.GetChannelKeyValueList<DBNoticeTypeModel>(channelModelList, modelList, channelCode, (DBNoticeTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBNoticeTypeModel model) =>
+            {
+                return model.TypeName;
+            });
+        }
+        private string GetNoticeTypeJsonText(List<DBChannelModel> channelModelList, List<DBNoticeTypeModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBNoticeTypeModel>(channelModelList, modelList, (DBNoticeTypeModel model) =>
             {
                 return model.IdentityID;
             }, (DBNoticeTypeModel model) =>

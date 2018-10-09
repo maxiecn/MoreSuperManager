@@ -42,7 +42,7 @@ namespace MoreSuperManager.DAL
         }
         public List<DBNoticeTypeModel> List()
         {
-            return DataBaseHelper.More<DBNoticeTypeModel>(null, p => new { p.IdentityID, p.TypeName }, null, p => p.TypeSort, true, TABLE_NAME);
+            return DataBaseHelper.More<DBNoticeTypeModel>(null, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
 
         public List<DBNoticeTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
