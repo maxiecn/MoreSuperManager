@@ -1,0 +1,130 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model List<DBMessageModel>
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div>
+    <div class="search">
+        <form action="@Url.Action("List")" class="form-horizontal" method="post">
+            <div class="pull-left" style="padding:0px;">
+                <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
+            </div>
+            <div class="input-group pull-right" style="padding:0px;width:500px;">
+                <input type="text" id="searchKey" name="searchKey" value="@ViewData["SearchKey"]" class="form-control" placeholder="输入关键字进行搜索！" />
+                <span class="input-group-btn" style="width : 135px;">
+                    <select class="form-control" name="loginStatus">
+                        <option value="-1" selected>选择留言状态</option>
+                        @if (ViewBag.StatusTypeList != null && ViewBag.StatusTypeList.Count > 0)
+                        {
+                            foreach (DBKeyValueModel modelItem in ViewBag.StatusTypeList)
+                            {
+                                <option value="@modelItem.Key" @Html.Raw((ViewData["MessageStatus"] != null && ViewData["MessageStatus"].ToString() == modelItem.Key.ToString()) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
+                            }
+                        }
+                    </select>
+                </span>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-search"></span><i style="margin-left:10px;font-style:normal;">搜索</i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="list">
+        <form action="@Url.Action("MoreOperater")" class="form-horizontal" method="post" id="operaterForm">
+            <div class="panel panel-default">
+                <table id="tableList" class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th class="first">
+                                <input type="checkbox" style="margin-top:0px;margin-bottom:0px;" id="checkAllOrNoTop" />
+                            </th>
+                            <th>联系人</th>
+                            <th>电话</th>
+                            <th>邮箱</th>
+                            <th>IP</th>
+                            <th>状态</th>
+                            <th>日期</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (DBMessageModel modelItem in Model)
+                            {
+                                <tr id="@modelItem.IdentityID" data-message-status="@modelItem.MessageStatus">
+                                    <td class="first">
+                                        <input type="checkbox" name="identityIDList" value="@modelItem.IdentityID" />
+                                    </td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ContactName))</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ContactTelphone))</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ContactEmail))</td>
+                                    <td>@modelItem.ContactIP</td>
+                                    <td>
+                                        @if (modelItem.MessageStatus == MoreSuperManager.ENUM.MessageStatusTypeEnum.DEFAULT)
+                                        {
+                                            <span>未读</span>
+                                        }
+                                        else if (modelItem.MessageStatus == MoreSuperManager.ENUM.MessageStatusTypeEnum.READ)
+                                        {
+                                            <span>已读</span>
+                                        }
+                                        else
+                                        {
+                                            <span>已回复</span>
+                                        }
+                                    </td>
+                                    <td>@modelItem.MessageDate.ToString("yyyy-MM-dd hh:mm:ss")</td>
+                                    <td>
+                                        <a data-id="@modelItem.IdentityID" class="operater-info"><i class="glyphicon glyphicon-file list-oper-button"></i>查看</a>
+                                        <a data-id="@modelItem.IdentityID" class="operater-delete"><i class="glyphicon glyphicon-trash list-oper-pad-button"></i>删除</a>
+                                    </td>
+                                </tr>
+                            }
+                            <tr style="background-color:#ffffff;">
+                                <td class="first" style="vertical-align:middle;">
+                                    <input type="checkbox" id="checkAllOrNoBottom" />
+                                </td>
+                                <td colspan="7">
+                                    <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
+                                        <select class="form-control" id="operaterType" name="operaterType">
+                                            <option value="@MoreSuperManager.ENUM.OperaterTypeEnum.DELETE">删除</option>
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" id="btnOperaterSubmit">操作</button>
+                                        </span>
+                                    </div>
+                                    @if (ViewData["PageModel"] != null)
+                                    {
+                                        @Html.Partial("~/Areas/Manager/Views/Shared/_Pagination.cshtml", ViewData["PageModel"])
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="background-color:#ffffff;">
+                                <td colspan="8" class="list-non-data">
+                                    没有相关数据！
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display:none;">
+    <input type="hidden" id="operaterInfoUrl" value="@Url.Action("Info", new { identityID = -1 })" />
+    <input type="hidden" id="operaterDeleteUrl" value="@Url.Action("DeleteOperater", new { identityID = -1 })" />
+</div>
+@section Scripts
+{
+    <script type="text/javascript" src="~/JavaScripts/module/Message/list.js?v=@SettingHelper.Version"></script>
+}
+

@@ -1,0 +1,92 @@
+﻿@using MoreSuperManager.MODEL
+@using Helper.Core.Library
+@model List<DBApplicationModel>
+
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+@section Styles{
+<link href="~/Content/jquery.gridly.css?v=@SettingHelper.Version" rel="stylesheet" type="text/css" />
+}
+
+<div>
+    <div class="search">
+        <form id="operaterForm" action="@Url.Action("AppOperater")" class="form-horizontal" method="post">
+            <div class="pull-left" style="padding:0px;">
+                <button type="button" style="margin-right:5px;" class="btn btn-info" id="btnGridItemAdd"><i class="glyphicon glyphicon-plus" style="font-size:12px;padding-right : 10px;"></i>添加</button>
+                <input type="hidden" id="gridItemList" name="gridItemList" />
+                <button type="button" class="btn btn-primary" id="btnGridItemSave"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+            </div>
+        </form>
+    </div>
+    <div class="app-list forbidden-text-select">
+        <div class="gridly" id="gridlyList">
+            @if (ViewBag.ApplicationList != null && ViewBag.ApplicationList.Count > 0)
+            {
+                foreach(DBApplicationModel modelItem in ViewBag.ApplicationList)
+                {
+                    <div id="grid_@modelItem.IdentityID" data-type="@modelItem.ApplicationType" class="brick @modelItem.ApplicationType">
+                        <i data-icon="@modelItem.ApplicationIcon" class="@modelItem.ApplicationIcon icon"></i>
+                        <a href="@modelItem.ApplicationUrl" class="link">@Html.Raw(Server.HtmlEncode(modelItem.ApplicationName))</a>
+                        <span id="grid_edit_@modelItem.IdentityID" data-id="@modelItem.IdentityID" class="glyphicon glyphicon-edit oper edit"></span>
+                        <span id="grid_delete_@modelItem.IdentityID" class="glyphicon glyphicon-remove-sign oper delete"></span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div id="gridlyItem" class="form-grid-item">
+        <form action="#" class="form-horizontal" method="post">
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">应用名称：</label>
+                <div class="col-xs-10 form-cell" style="width:325px;">
+                    <input type="text" class="form-control" id="applicationName" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">应用图标：</label>
+                <div class="col-xs-10 form-cell" style="width:325px;">
+                    <input type="text" class="form-control" id="applicationIcon" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label style="padding-top:0px;" class="col-xs-2 control-label form-label">格子类型：</label>
+                <div class="col-xs-10 form-inline form-cell" style="width:360px;padding-top:0px;">
+                    <div class="radio-inline" style="padding-top:0px;">
+                        <label class="form-radio-label"><input type="radio" name="applicationType" value="small" checked="checked" />小（一格）</label>
+                        <label class="form-radio-label"><input type="radio" name="applicationType" value="middle" />中（二格）</label>
+                        <label class="form-radio-label" style="margin-right:28px;"><input type="radio" name="applicationType" value="large" />大（三格）</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">应用链接：</label>
+                <div class="col-xs-10 form-cell" style="width:325px;">
+                    <input type="text" class="form-control" id="applicationUrl" />
+                </div>
+            </div>
+            <div class="form-group">
+                <span style="padding-left:110px;">
+                    <input type="hidden" id="grid_identityID" />
+                    <button type="button" id="btnItemAdd" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                    <button type="button" id="btnItemCancel" class="btn btn-danger" style="margin-left:10px;"><i class="glyphicon glyphicon-off" style="font-size:12px;padding-right : 10px;"></i>取消</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts
+{
+    <script type="text/javascript" src="~/JavaScripts/jquery.gridly.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/module/Application/App.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript">
+        /* 必须设置 */
+        var gridSizeOptions = {
+            height: 60,
+            widthSmall: 180,
+            widthMiddle: 375,
+            widthLarge: 570
+        };
+    </script>
+}

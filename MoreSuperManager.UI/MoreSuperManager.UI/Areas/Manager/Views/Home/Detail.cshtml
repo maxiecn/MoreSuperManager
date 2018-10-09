@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Detail</title>
+    <link rel="stylesheet" href="~/Content/superframe.ui.css?v=@SettingHelper.Version" />
+</head>
+<body>
+    <div style="padding:20px;"> 
+        <h3>欢迎来到管理后台首页！</h3>
+        <div style="margin-top:10px;">
+            <div>本系统采用 Visual Studio 2013 + SqlServer 2008 R2 开发，.Net Framework 最低支持 4.5 版本，前端样式采用 Bootstrap，浏览器支持谷歌/火狐或者 IE 11（及以上）。</div>
+        </div>
+        <div style="margin-top:10px;color:#808080;">
+            <div>相关插件地址：</div>
+            <ul>
+                <li style="padding-top:10px;">plugin.smartmenu.min.js：http://www.zhangxinxu.com/wordpress/?p=1667</li>
+            </ul>
+        </div>
+        <div style="margin-top:10px;color:#808080;">
+            <div>项目和流程设计方案：</div>
+            <ul>
+                <li style="padding-top:10px;">1、项目管理中的当前节点往往需要其他表来辅助设置第一步节点 ID</li>
+                <li style="padding-top:10px;">2、比如 OA 请假流程，用户在请假单中填写一条请假申请，提交数据的时候会同时在项目管理表中添加一条新的记录，并根据流程记录相应的节点 ID。之后在项目管理中，根据节点 ID 查找子节点 ID，显示节点的操作简称，然后角色在点击节点操作的时候，首先进行授权验证，可以根据流程节点授权角色列表来验证角色是否有相应的权限，如果通过授权验证，则根据数据更新这条记录的当前节点 ID</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

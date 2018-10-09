@@ -1,0 +1,148 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model MoreSuperManager.MODEL.DBTopicModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="operater">
+    <form id="operaterForm" action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = Model != null ? Model.IdentityID : 0 })" class="form-horizontal" method="post">
+        @Html.AntiForgeryToken()
+        @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+        {
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">所属频道：</label>
+                <div class="col-xs-10 form-cell">
+                    <select class="form-control" style="width:200px;" name="channelCode" id="channelCode">
+                        @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                        {
+                            <option value="@modelItem.ChannelCode" @(Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">主题类别：</label>
+            <div class="col-xs-10 form-cell">
+                <select class="form-control" style="width:400px;" name="topicType" id="topicType">
+                    @if (ViewBag.TopicTypeList != null && ViewBag.TopicTypeList.Count > 0)
+                    {
+                        foreach (ViewTreeTopicTypeModel modelItem in ViewBag.TopicTypeList)
+                        {
+                            <option value="@modelItem.IdentityID" @Html.Raw((Model != null && Model.TopicType == modelItem.IdentityID) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.LayerName))</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">主题标题：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control" style="width:400px;" name="topicTitle" type="text" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.TopicTitle : ""))" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">主题标签：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control" style="width:400px;" name="topicTags" type="text" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.TopicTags : ""))" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">主题封面：</label>
+            <div class="col-xs-10 form-cell" style="height:35px;line-height:35px;">
+                <input type="text" id="cover_url" name="topicCoverImageUrl" class="form-control pull-left form-file-input" value="@(Model != null ? Model.TopicCoverImageUrl : "")" />
+                <a href="javascript:;" class="btn btn-primary pull-left form-file-link">
+                    选择文件 ...
+                    <input id="coverUpload" class="form-file" type="file" multiple="multiple" />
+                </a>
+                <span id="cover_item" class="pull-left" style="margin-left:10px;margin-top:0px;display:@(Model != null && !string.IsNullOrEmpty(Model.TopicCoverImageUrl) ? "block" : "none")">
+                    <a href="@(Model != null ? Model.TopicCoverImageUrl : "#")" id="cover_link" target="_blank" style="margin-right:10px;">查看</a><a id="cover_delete" style="cursor:pointer">删除</a>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">主题简介：</label>
+            <div class="col-xs-10 form-cell">
+                <textarea class="form-control" name="topicSummary" style="width:400px;height:60px;">@Html.Raw(Server.HtmlEncode(Model != null ? Model.TopicSummary : ""))</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">主题内容：</label>
+            <div class="col-xs-10 form-cell">
+                <div style="width:800px;overflow:hidden;">
+                    <textarea name="topicContent" style="height:400px;">@(Model != null ? Model.TopicContent : "")</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">来源网站：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control" name="topicOriginalWebsite" style="width:400px;" type="text" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.TopicOriginalWebsite : ""))" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">来源地址：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control" name="topicOriginalUrl" style="width:400px;" type="text" value="@(Model != null ? Model.TopicOriginalUrl : "")" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label style="padding-top:0px;" class="col-xs-2 control-label form-label">投放位置：</label>
+            <div class="col-xs-10 form-cell">
+                <div class="checkbox-inline forbidden-text-select" style="padding-top:0px;" id="menuActionList">
+                    @if (ViewBag.PositionTypeList != null && ViewBag.PositionTypeList.Count > 0)
+                    {
+                        foreach (DBTopicPositionTypeModel modelItem in ViewBag.PositionTypeList)
+                        {
+                            <label class="form-checkbox-label"><input type="checkbox" name="positionTypeList" value="@modelItem.IdentityID" @(Html.Raw(DataHelper.IsContains(modelItem.IdentityID.ToString(), Model != null ? Model.PositionTypeList : "") ? "checked=\"checked\"" : ""))/>@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</label>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <span style="padding-left:100px;">
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                @if (Model == null || Model.IdentityID == 0)
+                {
+                    <input type="hidden" id="topicStatus" name="topicStatus" value="0" />
+                    <!--如果有审核权限-->
+                    if (DataHelper.AuthAction(ViewBag.LoginUserModel.RoleID.ToString(), "Topic", "Check"))
+                    { 
+                        <button type="button" id="btnSaveAndCheck" class="btn btn-danger" style="margin-left:10px;"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存并审核</button>
+                    }
+                }
+                <a class="btn btn-warning" style="margin-left:10px;" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回管理页面</a>
+            </span>
+        </div>
+    </form>
+</div>
+@section Scripts
+{
+    <script type="text/javascript" src="~/JavaScripts/plugin.fileupload.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/ckeditor/ckeditor.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/module/Topic/edit.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript">
+        // 封面可上传图片格式
+        var uploadImageExt = "@SettingHelper.UploadImageExt";
+        // 封面可上图片大小限制
+        var uploadImageMaxSize = "@SettingHelper.UploadImageMaxSize";
+        // 封面上传文件路径
+        var uploadCoverPath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.COVER, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.FILE }))";
+        // 编辑器上传附件路径
+        var uploadFilePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.FILE, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+        // 编辑器上传图片路径
+        var uploadImagePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.IMAGE, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+        // 编辑器上传视频路径
+        var uploadVideoPath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.VIDEO, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+
+        var topicTypeJsonText = "@Html.Raw(ViewBag.TopicTypeJsonText)";
+        var topicTypeJsonData = JSON.parse(topicTypeJsonText);
+
+        var topicPositionTypeJsonText = "@Html.Raw(ViewBag.TopicPositionTypeJsonText)";
+        var topicPositionTypeJsonData = JSON.parse(topicPositionTypeJsonText);
+    </script>   
+}
+

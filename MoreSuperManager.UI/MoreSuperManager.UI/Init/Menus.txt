@@ -1,0 +1,31 @@
+﻿Topic-Trunk,主题系统,#, glyphicon glyphicon-file,-1
+Topic,主题管理,/Manager/Topic/List,#,Topic-Trunk
+TopicType,主题类别,/Manager/TopicType/List,#,Topic-Trunk
+TopicPositionType,主题位置,/Manager/TopicPositionType/List,#,Topic-Trunk
+Project-Trunk,项目管理,#,glyphicon glyphicon-random,-1
+Project,项目管理,/Manager/Project/List,#,Project-Trunk
+ProjectType,项目类别,/Manager/ProjectType/List,#,Project-Trunk
+Flow,流程管理,/Manager/Flow/List,#,Project-Trunk
+FlowType,流程类别,/Manager/FlowType/List,#,Project-Trunk
+FlowSymbolType,流程符号,/Manager/FlowSymbolType/List,#,Project-Trunk
+Vote-Trunk,投票系统,#,glyphicon glyphicon-fileglyphicon glyphicon-stats,-1
+Vote,投票管理,/Manager/Vote/List,#,Vote-Trunk
+VoteType,投票类别,/Manager/VoteType/List,#,Vote-Trunk
+LinkFriend-Trunk,友情链接,#,glyphicon glyphicon-link,-1
+LinkFriend,链接管理,/Manager/LinkFriend/List,#,LinkFriend-Trunk
+LinkFriendType,链接类别,/Manager/LinkFriendType/List,#,LinkFriend-Trunk
+Notice-Trunk,站内公告,#,glyphicon glyphicon-bullhorn,-1,
+Notice,公告管理,/Manager/Notice/List,#,Notice-Trunk
+NoticeType,公告类别,/Manager/NoticeType/List,#,Notice-Trunk
+Setting-Trunk,系统设置,#,glyphicon glyphicon-cog,-1
+ActionType,权限管理,/Manager/ActionType/List,#,Setting-Trunk
+Module,模块管理,/Manager/Module/List,#,Setting-Trunk
+Menu,菜单管理,/Manager/Menu/List,#,Setting-Trunk
+Role,角色管理,/Manager/Role/List,#,Setting-Trunk
+User,用户管理,/Manager/User/List,#,Setting-Trunk
+Setting,功能设置,/Manager/Setting/Set,#,Setting-Trunk
+Message,留言管理,/Manager/Message/List,#,Setting-Trunk
+UserLog,日志管理,/Manager/UserLog/List,#,Setting-Trunk
+Attachment,附件管理,/Manager/Attachment/List,#,Setting-Trunk
+IndexMapper,类别映射,/Manager/IndexMapper/List,#,Setting-Trunk
+Application,应用中心,/Manager/Application/App,#,Setting-Trunk

@@ -1,0 +1,62 @@
+﻿@using MoreSuperManager.MODEL
+@using Helper.Core.Library
+@model List<DBFlowStepModel>
+
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div>
+    <form action="@Url.Action("FlowAuthOperater", new { flowID = ViewBag.FlowID })" method="post" class="form-inline" id="operaterForm">
+        <div class="search">
+            <div class="pull-left" style="padding:0px;">
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                <a href="@Url.Action("List")" class="btn btn-warning" style="margin-left: 5px;"><i class="glyphicon glyphicon-share-alt" style="font-size:12px;padding-right : 10px;"></i>返回流程管理</a>
+            </div>
+        </div>
+        <div class="list">
+            <div class="panel panel-default">
+                <table id="tableList" class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>流程名称</th>
+                            <th>操作权限</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if(Model != null && Model.Count > 0)
+                        {
+                            foreach (DBFlowStepModel modelItem in Model)
+                            {
+                                <tr id="@modelItem.IdentityID">
+                                    <td>@Html.Raw("[" + modelItem.StepCode + "]" + Server.HtmlEncode(modelItem.StepName) + (!string.IsNullOrEmpty(modelItem.StepAddrName) ? ("(" + Server.HtmlEncode(modelItem.StepAddrName) + ")") : ""))</td>
+                                    <td>
+                                        @if (ViewBag.RoleList != null && ViewBag.RoleList.Count > 0)
+                                        {
+                                            <div class="checkbox-inline">
+                                                @foreach (DBRoleModel roleModelItem in ViewBag.RoleList)
+                                                {
+                                                    <label class="form-checkbox-label"><input type="checkbox" name="roleList" value="@(modelItem.IdentityID + "_" + roleModelItem.IdentityID)" @Html.Raw(DataHelper.IsContains(roleModelItem.IdentityID.ToString(), modelItem.RoleList) ? "checked=\"checked\"" : "") />@Html.Raw(Server.HtmlEncode(roleModelItem.RoleName))</label>
+                                                }
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" class="list-non-data">
+                                    没有相关数据！
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+

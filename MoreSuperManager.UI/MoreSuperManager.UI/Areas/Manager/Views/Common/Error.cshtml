@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>错误提示！</title>
+    <link rel="stylesheet" href="~/Content/3.3.7/css/bootstrap.min.css?v=@SettingHelper.Version" />
+    <link rel="stylesheet" href="~/Content/superframe.ui.css?v=@SettingHelper.Version" />
+
+    <script type="text/javascript" src="~/JavaScripts/jquery.min.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/Content/3.3.7/js/bootstrap.min.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/plugin.common.js?v=@SettingHelper.Version"></script>
+    @if (ViewBag.HasParent)
+    {
+        <script type="text/javascript" src="~/JavaScripts/superframe.ui.js?v=@SettingHelper.Version"></script>
+    }
+    else
+    {
+        <script type="text/javascript" src="~/JavaScripts/superframe.frame.js?v=@SettingHelper.Version"></script>
+    }
+
+    <script type="text/javascript">
+
+        var buttonStatus = false;
+
+        function OperaterCallback(parentStatus) {
+            if (parentStatus == "false") {
+                location.href = "@ViewBag.Url";
+            } else {
+                parent.location.href = "@ViewBag.Url";
+            }
+        }
+
+        $(function () {
+
+            var status = "@ViewBag.Status".toLowerCase();
+            var parentStatus = "@ViewBag.Parent".toLowerCase();
+
+            if (status == "true") {
+                SuccessAlertToCallback("@ViewBag.Note", function () {
+                    buttonStatus = true;
+                    // 调用操作回调函数
+                    OperaterCallback(parentStatus);
+                }, function () {
+                    if (buttonStatus) return;
+                    OperaterCallback(parentStatus);
+                });
+            }
+            else {
+                ErrorAlertToCallback("@ViewBag.Note", function () {
+                    buttonStatus = true;
+                    // 调用操作回调函数
+                    OperaterCallback(parentStatus);
+                }, function () {
+                    if (buttonStatus) return;
+                    OperaterCallback(parentStatus);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>

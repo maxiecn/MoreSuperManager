@@ -1,0 +1,366 @@
+﻿html, body, ul, li, img, dl, dt, dd, span, a, h1, h2, h3, h4, h5, h6 {
+    margin: 0px;
+    padding: 0px;
+}
+body {
+    font-family: '微软雅黑';
+    margin: 0 auto;
+    font-size:13px;
+}
+html, body {
+    height: 100%;
+    width:100%;
+}
+ul {
+    display: block;
+    list-style: none;
+}
+li {
+    display: block;
+    list-style: none;
+}
+img {
+    border: 0;
+}
+dl, dt, dd, span {
+    display: block;
+}
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+a {
+    margin: 0px;
+    padding: 0px;
+    color: #000000;
+    text-decoration: none;
+}
+a:hover {
+    color: #00a4ac;
+    text-decoration: none;
+}
+cite {
+    font-style: normal;
+}
+h2 {
+    font-weight: normal;
+}
+td, th {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.not-select {
+    -moz-user-select: none; /*火狐*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -ms-user-select: none; /*IE10*/
+    user-select: none;
+}
+.body {
+    padding: 88px 0px 0px 0px;
+    box-sizing: border-box;
+    height: 100%;
+}
+.header {
+    height: 88px;
+    overflow: hidden;
+    background: url("Static/header-background.gif") repeat-x;
+    margin-top: -88px;
+}
+    .header .logo {
+        float: left;
+        height: 88px;
+        width: 300px;
+        overflow: hidden;
+        background: url("Static/logo-background.jpg") no-repeat;
+    }
+        .header .logo img {
+            margin-top: 12px;
+            margin-left: 10px;
+        }
+    .header .nav {
+        float : left;
+    }
+        .header .nav li {
+            float: left;
+            width: 87px;
+            height: 88px;
+            text-align: center;
+        }
+            .header .nav li a {
+                display: block;
+                width: 87px;
+                height: 88px;
+                padding: 0px;
+            }
+                .header .nav li a.selected {
+                    background: url(Static/nav-selected.png) no-repeat;
+                }
+                .header .nav li a:hover {
+                    display: block;
+                    color: #fff;
+                    background: none repeat scroll 0% 0% rgb(43, 127, 181);
+                }
+            .header .nav li img {
+                margin-top: 10px;
+                margin-bottom: 0px;
+            }
+            .header .nav li h2 {
+                color: #d6e8f1;
+                font-size: 14px;
+                margin-top: 3px;
+            }
+            .header .nav li a:hover h2 {
+                    color: #fff;
+            }
+    .header .login {
+        height: 88px;
+        background: url(Static/login-background.jpg) no-repeat right;
+        float: right;
+    }
+        .header .login ul {
+            padding-top: 15px;
+            float: right;
+            padding-right: 12px;
+        }
+            .header .login ul li {
+                float: left;
+                padding-left: 9px;
+                padding-right: 9px;
+                background: url(Static/line.gif) no-repeat right;
+            }
+                .header .login ul li.none {
+                    background: none;
+                }
+            .header .login ul span {
+                margin-top: 2px;
+                float: left;
+                padding-right: 3px;
+                display: block;
+            }
+            .header .login ul a {
+                font-size: 13px;
+                color: #e9f2f7;
+            }
+        .header .login .user {
+            height: 30px;
+            background: url(Static/user-background.png) repeat-x;
+            clear: both;
+            margin-top: 10px;
+            float: right;
+            margin-right: 12px;
+            border-radius: 30px;
+            white-space: nowrap;
+            position: relative;
+        }
+            .header .login .user span {
+                display: inline-block;
+                padding-right: 20px;
+                background: url(Static/icon-user.png) no-repeat 15px 9px;
+                line-height: 30px;
+                font-size: 14px;
+                color: #b8ceda;
+                padding-left: 40px;
+            }
+            .header .login .user a {
+                color: #b8ceda;
+                margin-left: 10px;
+            }
+.main {
+    height: 100%;
+    width: 100%;
+    background-color: #F0F9FD;
+    clear: both;
+    overflow: hidden;
+    position:relative;
+}
+    .main .nav {
+        width: 190px;
+        float: left;
+        height : 100%;
+        overflow: hidden;
+    }
+        .main .nav .nav-title {
+            background: url(Static/nav-background.gif) repeat-x;
+            height: 40px;
+            color: #fff;
+            font-size: 14px;
+            line-height: 40px;
+        }
+            .main .nav .nav-title span {
+                margin-left: 10px;
+                margin-right:10px;
+            }
+        .main .nav .menu {
+            width: 208px;
+            overflow: hidden;
+            background: url(Static/menu-line.gif) repeat-y right;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+        }
+        .main .nav .menu dt{
+            height:40px;
+        }
+            .main .nav .menu .menu-title {
+                background: url(Static/menu-background.gif) repeat-x;
+                line-height: 35px;
+                font-weight: bold;
+                font-size: 14px;
+                font-size: 9pt;
+            }
+                .main .nav .menu .menu-title span {
+                    margin-left:10px;
+                    margin-right:10px;
+                }
+            .main .nav .menu dd ul {
+                line-height: 30px;
+                font-weight: normal;
+                padding: 5px 0px;
+            }
+                .main .nav .menu dd ul a {
+                    color: #000000;
+                }
+            .main .nav .menu a:hover {
+                position: relative;
+                background: url(Static/menu-selected.png) repeat-x;
+                line-height: 30px;
+                width:191px;
+                display:inline-block;
+            }
+                .main .nav .menu a:hover i {
+                    display: block;
+                    background: url(Static/menu-selected-tag.png) no-repeat;
+                    width: 6px;
+                    height: 11px;
+                    position: absolute;
+                    right: 0px;
+                    top: 9px;
+                }
+                .main .nav .menu a:hover span{
+                    color:#ffffff;
+                }
+                .main .nav .menu li{
+                    cursor:pointer;
+                }
+                .main .nav .menu li b {
+                    display: block;
+                    float: left;
+                    margin-left: 32px;
+                    background: url(Static/menu-icon.gif) no-repeat;
+                    width: 16px;
+                    height: 16px;
+                    margin-top: 7px;
+                }
+                .main .nav .menu a:hover b{
+                    background: url(Static/menu-selected-icon.gif) no-repeat;
+                }
+    .main .content {
+        position: relative;
+        margin-left: 190px;
+        height: 100%;
+        background-color: #ffffff;
+    }
+        .main .content .place {
+            height: 40px;
+            background: url(Static/place-background.gif) repeat-x;
+            line-height: 40px;
+        }
+            .main .content .place span {
+                float: left;
+                margin-left: 12px;
+                font-weight: bold;
+            }
+            .main .content .place li {
+                float: left;
+                line-height: 40px;
+                padding-left: 7px;
+                padding-right: 12px;
+                background: url(Static/place-tag.gif) no-repeat right;
+            }
+                .main .content .place li.last-child {
+                    background: none;
+                }
+                .main .content .place li a {
+                    color: #000;
+                }
+.data-content {
+    margin:0px;padding:0px;
+}
+    .data-content .data-data {
+        padding: 10px;
+    }
+        .data-content .data-data .search {
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+            .data-content .data-data .search .toolbar li {
+                background: url(Static/toolbar-background.gif) repeat-x;
+                line-height: 33px;
+                height: 35px;
+                border: solid 1px #d3dbde;
+                float: left;
+                padding-right: 10px;
+                margin-right: 5px;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+                .data-content .data-data .search .toolbar li span {
+                    float: left;
+                    margin-left: 10px;
+                    margin-right: 5px;
+                    margin-top: -1px;
+                }
+        .data-content .data-data .list {
+
+        }
+            .data-content .data-data .list table {
+                border: solid 1px #cbcbcb;
+                clear: both;
+            }
+            .data-content .data-data .list tr {
+                height: 35px;
+            }
+            .data-content .data-data .list th {
+                background-color: #F0F5F7;
+                border-bottom: solid 1px #b6cad2;
+                background: url(Static/th-background.gif) bottom;
+                text-align: left;
+                height: 35px;
+                vertical-align:middle;
+                overflow : hidden;
+            }
+                .data-content .data-data .list th.first {
+                    width: 55px;
+                }
+            .data-content .data-data .list tr.odds {
+                background: #f5f8fa;
+            }
+            .data-content .data-data .list .tree-node {
+                display: inline-block;
+                width: 16px;
+                height: 18px;
+                overflow: hidden;
+                margin-right:5px;
+            }
+            .data-content .data-data .list .tree-default-icon {
+                background: url(Static/tree-icons.png) no-repeat 0px 3px;
+            }
+            .data-content .data-data .list .tree-expand-icon {
+                background: url(Static/tree-icons.png) no-repeat -18px 3px;
+            }
+            .data-content .data-data .list .page-records {
+                margin-right:10px;
+                padding-top:6px;
+            }
+            .data-content .data-data .list .page-records i{
+                font-style:normal;
+                padding:0px 5px;
+            }
+        .data-content .data-data .operater {
+            overflow : hidden;
+            margin: 20px 0px 0px 20px;
+        }
+            .data-content .data-data .operater .operater-label {
+                padding-bottom: 10px;
+            }

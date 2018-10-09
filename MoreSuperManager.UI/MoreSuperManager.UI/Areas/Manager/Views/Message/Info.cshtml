@@ -1,0 +1,87 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model MoreSuperManager.MODEL.DBMessageFullModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="operater">
+    <form action="#" class="form-horizontal" method="post">
+        <div class="form-group">
+            <div class="col-xs-2 form-label">联&nbsp;&nbsp;系&nbsp;&nbsp;人：</div>
+            <div class="col-xs-10 form-cell">@Html.Raw(Server.HtmlEncode(Model.ContactName))</div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-2 form-label">联系电话：</div>
+            <div class="col-xs-10 form-cell">@Html.Raw(Server.HtmlEncode(Model.ContactTelphone))</div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-2 form-label">联系邮箱：</div>
+            <div class="col-xs-10 form-cell">@Html.Raw(Server.HtmlEncode(Model.ContactEmail))</div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-2 form-label">留言日期：</div>
+            <div class="col-xs-10 form-cell">
+                <span>@Model.MessageDate.ToString("yyyy-MM-dd")</span>
+                <span>（留言 IP 地址：@Model.ContactIP）</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-2 form-label">留言内容：</div>
+            <div class="col-xs-10 form-cell">@Html.Raw(Server.HtmlEncode(Model.MessageContent))</div>
+        </div>
+        @if (Model.MessageStatus == MoreSuperManager.ENUM.MessageStatusTypeEnum.REPLY)
+        {
+            <div class="form-group">
+                <div class="col-xs-2 form-label">回&nbsp;&nbsp;复&nbsp;&nbsp;人：</div>
+                <div class="col-xs-10 form-cell">@Html.Raw(Server.HtmlEncode(Model.NickName))<span>（<i style="font-style:normal;">@Html.Raw(Server.HtmlEncode(Model.UserCode))</i>）</span></div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-2 form-label">回复时间：</div>
+                <div class="col-xs-10 form-cell">@Model.ReplyDate.ToString("yyyy-MM-dd")</div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-2 form-label">回复内容：</div>
+                <div class="col-xs-10 form-cell">@Html.Raw(Model.ReplyContent)</div>
+            </div>
+        <div class="form-group">
+            <span style="padding-left:100px;">
+                <a class="btn btn-warning" style="margin-left:10px;" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回管理页面</a>
+            </span>
+        </div>
+        }
+    </form>
+    @if (Model.MessageStatus != MoreSuperManager.ENUM.MessageStatusTypeEnum.REPLY)
+    { 
+        <form action="@Url.Action("ReplyOperater")" class="form-horizontal" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">回复内容：</label>
+                <div class="col-xs-10 form-cell">
+                    <div style="width:800px;overflow:hidden;">
+                        <textarea name="replyContent" style="height:400px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <span style="padding-left:100px;">
+                    <input type="hidden" name="messageID" value="@Model.IdentityID" />
+                    <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                    <a class="btn btn-warning" style="margin-left:10px;" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回管理页面</a>
+                </span>
+            </div>
+        </form>
+    }
+</div>
+@section Scripts
+{
+    <script type="text/javascript" src="~/JavaScripts/ckeditor/ckeditor.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/module/Message/info.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript">
+    var uploadFilePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.File, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    var uploadImagePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.Image, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    var uploadVideoPath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.Video, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    </script>
+}
+

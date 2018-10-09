@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <!--管理后台版本-->
+  <item name="version" value="1.0.0.7" />
+  <!--管理后台 Title 显示-->
+  <item name="managerTitle" value="信息管理系统界面" />
+  <!--管理后台分页页大小-->
+  <item name="managerPageSize" value="10" />
+  <!--是否开启日志记录-->
+  <item name="logOpenStatus" value="0" />
+  <!--是否开启权限验证-->
+  <item name="authOpenStatus" value="1" />
+  <!--是否开启管理后台首页开发者工具-->
+  <item name="attachOpenStatus" value="0" />
+  <!--图片上传大小限制-->
+  <item name="uploadImageMaxSize" value="10485760" />
+  <!--图片上传格式-->
+  <item name="uploadImageExt" value=".jpg|.gif|.png" />
+  <!--视频上传大小限制-->
+  <item name="uploadVideoMaxSize" value="104857600" />
+  <!--视频上传格式-->
+  <item name="uploadVideoExt" value=".mp4|.rmvb" />
+  <!--文件上传大小限制-->
+  <item name="uploadFileMaxSize" value="10485760" />
+  <!--文件上传格式-->
+  <item name="uploadFileExt" value=".rar|.zip|.doc|.docx" />
+  <!--数据库备份参数 默认每天 3 点-->
+  <item name="bakCron" value="0 0 3 * * ?" />
+  <!--数据库备份路径-->
+  <item name="bakPath" value="~/DataBase/" />
+</settings>

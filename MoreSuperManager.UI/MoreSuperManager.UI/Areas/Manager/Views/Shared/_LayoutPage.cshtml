@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title - @SettingHelper.ManagerTitle</title>
+    <link rel="stylesheet" href="~/Content/3.3.7/css/bootstrap.min.css?v=@SettingHelper.Version" />
+    <link rel="stylesheet" href="~/Content/superframe.ui.css?v=@SettingHelper.Version" />
+    <style type="text/css">
+        ::-webkit-scrollbar { width: 10px; height: 10px; background-color: #F5F5F5; }
+        ::-webkit-scrollbar-thumb { background-color: #19222A; }
+        ::-webkit-scrollbar-track { background-color: #F5F5F5; }
+    </style>
+    @if (IsSectionDefined("Styles"))
+    {
+        @RenderSection("Styles", false)
+    }
+</head>
+<body>
+    <div class="data-content">
+        @RenderBody()
+        <div class="version">
+            版权所有&nbsp;&copy;&nbsp;2015&nbsp;-&nbsp;@DateTime.Now.Year<span>&nbsp;Version&nbsp;@SettingHelper.Version</span>
+        </div>
+    </div>
+    <div id="loadingMaskWindow" style="display:none;width:180px;height:90px;background-color:#ffffff;border-radius:5px;text-align:center;">
+        <b style="margin-top:20px;display:block;"><i id="upload_progress">0</i> %</b>
+        <div style="position:absolute; top:50px;left:10px; width:160px;height:20px;background:url(/Content/Static/loading.gif) no-repeat;"></div>
+    </div>
+
+    <script type="text/javascript" src="~/JavaScripts/jquery.min.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/Content/3.3.7/js/bootstrap.min.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/plugin.common.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/superframe.ui.js?v=@SettingHelper.Version"></script>
+    @if (IsSectionDefined("Scripts"))
+    {
+        @RenderSection("Scripts", false)
+    }
+</body>
+</html>

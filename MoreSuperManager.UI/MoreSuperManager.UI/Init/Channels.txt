@@ -1,0 +1,2 @@
+﻿main,主站
+channel1,子栏目一

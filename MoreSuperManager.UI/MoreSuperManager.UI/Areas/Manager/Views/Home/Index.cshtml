@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>首页 - @SettingHelper.ManagerTitle</title>
+    <link rel="stylesheet" href="~/Content/3.3.7/css/bootstrap.min.css?v=@SettingHelper.Version" />
+    <link rel="stylesheet" href="~/Content/plugin.css?v=@SettingHelper.Version" />
+    <link rel="stylesheet" href="~/Content/superframe.ui.css?v=@SettingHelper.Version" />
+</head>
+<body style="overflow-y:hidden;overflow-x:hidden">
+
+    <nav class="frame-nav" id="frameNav">
+        <div class="frame-nav-scroll">
+            <div class="frame-nav-header forbidden-text-select">
+                <div class="head-photo">
+                    <img src="~/Content/Static/head.jpg" alt="" />
+                    <div class="user-info">&nbsp;</div>
+                </div>
+                <div class="dropdown">
+                    <div data-toggle="dropdown" class="role-name">
+                        <span><i style="font-style:normal;margin-right:5px;">[@Html.Raw(Server.HtmlEncode(ViewBag.LoginUserModel.UserCode))]</i>@Html.Raw(Server.HtmlEncode(ViewBag.LoginUserModel.NickName))</span>
+                        <span class="caret" style="display:inline-block"></span>
+                    </div>
+                    <ul class="dropdown-menu">
+                        <li class="item"><a onclick="AddMenuItem('编辑资料', '@Url.Action("EditInfo", "User")')">编辑资料</a></li>
+                        <li class="item"><a onclick="AddMenuItem('修改密码', '@Url.Action("EditPassword", "User")')">修改密码</a></li>
+                        <li class="divider"></li>
+                        <li class="item"><a href="@Url.Action("Logout", "Login")">退出</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="frame-nav-list forbidden-text-select">
+                <ul class="list-unstyled" id="frameNavList">
+                    @Html.Raw(ViewBag.MenuData)
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="frame-content" id="frameContent">
+        <div class="frame-logo" id="contentTop">
+            <div class="pull-left expand-close">
+                <span class="btn btn-info" id="btnExpandOrCloseNav"><i class="glyphicon glyphicon-folder-open"></i></span>
+            </div>
+            @if (SettingHelper.AttachOpenStatus)
+            { 
+            <div class="pull-left input-group" style="width:500px;margin-left:10px;">
+                <input type="text" id="txtAttachToFrame" class="form-control" placeholder="输入链接地址！" />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" style="width:80px;" type="button" id="btnAttachToFrame"><span class="glyphicon glyphicon-plus"></span><i style="margin-left:10px;font-style:normal;">附加</i></button>
+                </span>
+            </div>
+            }
+        </div>
+        <div class="frame-tab forbidden-text-select" id="tabContainer">
+            <div data-button="backward" id="btnTabBackward" class="pull-left tab-backward"><i class="glyphicon glyphicon-backward" style="cursor:pointer;"></i></div>
+            <div class="pull-left frame-tab-scroll" id="tabScrollRegion">
+                <!-- 8000 宽度应该够使用 -->
+                <ul class="list-unstyled" style="width:8000px;" id="tabItemList">
+                    <li class="active" data-id="0" data-url="@Url.Action("Detail")" id="tab_item_0"><a>首页</a></li>
+                </ul>
+            </div>
+            <div data-button="forward" id="btnTabForward" class="pull-right tab-forward"><i class="glyphicon glyphicon-forward" style="cursor:pointer;"></i></div>
+        </div>
+        <div id="iframeContainer">
+            <iframe id="iframe_item_0" data-id="0" src="@Url.Action("Detail")" class="frame-iframe"></iframe>
+        </div>
+    </div>
+    <script type="text/javascript" src="~/JavaScripts/jquery.min.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/Content/3.3.7/js/bootstrap.min.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/plugin.common.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/superframe.frame.js?v=@SettingHelper.Version"></script>
+</body>
+</html>

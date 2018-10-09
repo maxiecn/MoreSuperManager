@@ -1,0 +1,15 @@
+﻿Add,添加
+Check,审核
+Delete,删除
+Edit,编辑
+EditInfo,编辑个人信息
+EditPassword,修改密码
+FlowAuth,步骤授权
+FlowDesignAdd,步骤添加
+FlowDesignEdit,步骤编辑
+Info,查看详情
+Reply,回复
+Upload,上传
+Set,设置
+Bak,备份
+App,应用中心

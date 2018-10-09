@@ -1,0 +1,69 @@
+.app-list {
+    margin-top: 50px;
+    position:relative;
+    width:1155px;
+}
+.gridly, .gridly > :not(.dragging) {
+    -webkit-transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    transition: all 0.4s ease-in-out;
+}
+    .gridly .dragging {
+        z-index: 800;
+    }
+
+    .gridly .brick {
+        opacity: 1;
+        cursor: pointer;
+        position: relative;
+        background-color: #c3e9fe;
+        height: 60px;
+        line-height: 60px;
+        border-radius: 5px;
+    }
+        .gridly .brick .oper {
+            display: block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            background-color: #ffffff;
+            position: absolute;
+            opacity: 0.7;
+            border-top-right-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+            .gridly .brick .oper.delete {
+                top: 5px;
+                right: 5px;
+            }
+            .gridly .brick .oper.edit {
+                top: 5px;
+                right: 40px;
+            }
+        .gridly .brick.small {
+            width: 180px;
+        }
+        .gridly .brick.middle {
+            width: 375px;
+        }
+        .gridly .brick.large {
+            width: 570px;
+        }
+        .gridly .brick .icon {
+            margin-left: 20px;
+            margin-right:5px;
+        }
+        .gridly .brick .link {
+        }
+        .gridly .brick.dragging {
+            opacity: 0.8;
+        }
+.form-grid-item {
+    display:none;
+    width: 480px;
+    padding: 40px 20px 20px 20px;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}

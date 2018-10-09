@@ -1,0 +1,97 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model DBRoleModel
+@{
+    ViewBag.Title = Model != null ? "编辑角色信息" : "添加角色信息";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div>
+    <form action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = (Model != null ? Model.IdentityID : 0) })" class="form-horizontal" method="post">
+        @Html.AntiForgeryToken()
+        <div class="search">
+            <div class="input-group pull-left" style="padding:0px;width:400px;">
+                <input type="text" name="roleName" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.RoleName : ""))" class="form-control" placeholder="输入角色名称！" />
+                @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+                { 
+                    <span class="input-group-btn" style="width:150px;">
+                        <select class="form-control" name="channelCode" id="channelCode">
+                            @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                            {
+                                <option value="@modelItem.ChannelCode" @Html.Raw(ViewBag.ChannelCode != null && ViewBag.ChannelCode.ToString() == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                            }
+                        </select>
+                    </span>
+                }
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-saved"></span><i style="margin-left:10px;font-style:normal;">保存</i></button>
+                </span>
+            </div>
+            <div class="input-group pull-left" style="padding:0px">
+                <a class="btn btn-warning" style="margin-left:10px;" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回角色管理</a>
+            </div>
+        </div>
+        <div class="list forbidden-text-select">
+            <div class="panel panel-default">
+                <table id="tableList" class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="first">
+                                <input type="checkbox" style="margin-top:0px;margin-bottom:0px;" id="checkAllOrNoTop" />
+                            </th>
+                            <th>菜单名称</th>
+                            <th>访问地址</th>
+                            <th>操作权限</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (ViewBag.MenuList != null && ViewBag.MenuList.Count > 0)
+                        {
+                            foreach (ViewTreeMenuModel modelItem in ViewBag.MenuList)
+                            {
+                                <tr id="@modelItem.IdentityID" data-pid="@modelItem.ParentID" data-status="true">
+                                    <td class="first">
+                                        <input type="checkbox" name="identityIDList" data-id="@modelItem.IdentityID" data-pid="@modelItem.ParentID" value="@modelItem.IdentityID" @Html.Raw(DataHelper.ExistsMenu(modelItem.IdentityID, Model != null ? Model.MenuList : "") ? "checked=\"checked\"" : "") />
+                                    </td>
+                                    <td style="padding-left:@((modelItem.LayerIndex - 1) * 35 + 10)px;">
+                                        @if (modelItem.LayerIndex <= 2)
+                                        {
+                                            <span id="span_tree_@(modelItem.IdentityID)" class="tree-node tree-expand-icon"></span>
+                                        }
+                                        @Html.Raw(Server.HtmlEncode(modelItem.MenuName))
+                                    </td>
+                                    <td>@modelItem.MenuUrl</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(modelItem.ActionList))
+                                        {
+                                            List<DBActionTypeModel> dataList = DataHelper.GetActionList(modelItem.ActionList, ViewBag.ActionTypeList);
+                                            if (dataList != null && dataList.Count > 0)
+                                            {
+                                                <div class="checkbox-inline" style="padding-top:0px;">
+                                                    @foreach (DBActionTypeModel dataItem in dataList)
+                                                    {
+                                                        <label class="form-checkbox-label"><input type="checkbox" name="menuActionList" value="@Html.Raw(Server.HtmlEncode(modelItem.BelongModule + ":" + dataItem.TypeCode))" @Html.Raw(DataHelper.ExistsAction(dataItem.TypeCode, modelItem.BelongModule, Model != null ? Model.ActionList : "") ? "checked=\"checked\"" : "") />@Html.Raw(Server.HtmlEncode(dataItem.TypeName))</label>
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+@section Scripts
+{
+    <script type="text/javascript" src="~/JavaScripts/module/Role/edit.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript">
+        var identityID = "@(Model != null ? Model.IdentityID : 0)";
+        var editUrl = "@Html.Raw(Url.Action("Edit", new { ChannelCode = -1, IdentityID = 0 }))";
+    </script>
+}
+
+

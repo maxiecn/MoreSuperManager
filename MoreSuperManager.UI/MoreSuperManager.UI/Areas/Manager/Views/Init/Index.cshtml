@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>系统初始化 - @SettingHelper.ManagerTitle</title>
+    <meta name="robots" content="noindex,follow" />
+    <link rel="stylesheet" href="~/Content/3.3.7/css/bootstrap.min.css?v=@SettingHelper.Version" />
+    <link rel="stylesheet" href="~/Content/login.css?v=@SettingHelper.Version" />
+</head>
+<body>
+    <div class="container login-container forbidden-text-select">
+        <div class="login-row">
+            <div class="login-col col-xs-12 col-sm-6 col-md-5 col-lg-4">
+                <div class="panel panel-default login-panel">
+                    <div class="login-title">初始化信息</div>
+                    <div class="panel-body">
+                        <form action="@Url.Action("Init", "Init")" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="input-group col-xs-12" style="border:0px;position:relative;padding:0px;">
+                                <input type="text" name="userCode" value="superadmin" class="form-control col-xs-12 login-user" placeholder="用户名" />
+                            </div>
+                            <div class="input-group col-xs-12" style="margin-top : 15px;border:0px;">
+                                <input type="text" name="nickName" value="超级管理员" class="form-control col-xs-12 login-user" placeholder="昵称" />
+                            </div>
+                            <div class="input-group col-xs-12" style="margin-top : 15px;border:0px;">
+                                <input type="password" name="userPassword" value="123456" class="form-control col-xs-12 login-password" placeholder="密码" />
+                            </div>
+                            <div class="col-xs-12 input-group" style="margin-top: 15px;">
+                                <button type="submit" class="btn btn-primary col-xs-12"><i class="glyphicon glyphicon-off" style="font-size:12px;padding-right : 10px;"></i>提交</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

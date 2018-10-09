@@ -1,0 +1,141 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model MoreSuperManager.MODEL.DBMenuModel
+@{
+    ViewBag.Title = Model != null ? "编辑菜单信息" : "添加菜单信息";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="operater">
+    <form action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = (Model != null ? Model.IdentityID : 0) })" class="form-horizontal" method="post">
+        @Html.AntiForgeryToken()
+        @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+        {
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">所属频道：</label>
+                <div class="col-xs-10 form-cell">
+                    <select class="form-control" style="width:200px;" name="channelCode" id="channelCode">
+                        <option value="@MoreSuperManager.ENUM.ChannelCodeTypeEnum.ALL" @(Html.Raw(Model != null && Model.ChannelCode == MoreSuperManager.ENUM.ChannelCodeTypeEnum.ALL ? "selected=\"selected\"" : ""))>@MoreSuperManager.ENUM.ChannelCodeTypeEnum.ALLNAME</option>
+                        @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                        {
+                            <option value="@modelItem.ChannelCode" @(Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">父级名称：</label>
+            <div class="col-xs-10 form-cell">
+                <select class="form-control" style="width:400px;" id="parentID" name="parentID">
+                    <option value="0">根级菜单</option>
+                    @if (ViewBag.TreeMenuList != null && ViewBag.TreeMenuList.Count > 0)
+                    {
+                        foreach (ViewTreeMenuModel modelItem in ViewBag.TreeMenuList)
+                        {
+                            if (modelItem.LayerIndex <= 2)
+                            {
+                                <option value="@modelItem.IdentityID" @Html.Raw(Model != null ? (Model.ParentID == modelItem.IdentityID ? "selected=\"selected\"" : "") : (ViewBag.ParentID == modelItem.IdentityID ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.LayerName))</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group" id="menuIconContainer" style="display:@(((Model == null && ViewBag.ParentID == 0) || (Model != null && Model.ParentID == 0)) ? "block" : "none")">
+            <label class="col-xs-2 control-label form-label">菜单图标：</label>
+            <div class="col-xs-10 form-cell">
+                <input type="text" class="form-control" style="width:200px;" name="menuIcon" value="@(Model != null ? Model.MenuIcon : "")" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">所属模块：</label>
+            <div class="col-xs-10 form-cell">
+                <select class="form-control" style="width:200px" id="belongModule" name="belongModule">
+                    <option value="-1">无</option>
+                    @if (ViewBag.ModuleList != null && ViewBag.ModuleList.Count > 0)
+                    {
+                        foreach (DBModuleModel modelItem in ViewBag.ModuleList)
+                        {
+                            <option value="@modelItem.ModuleCode" @Html.Raw((Model != null && modelItem.ModuleCode == Model.BelongModule) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ModuleName))</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">菜单名称：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control" style="width:200px;" type="text" name="menuName" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.MenuName : ""))" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">菜单路径：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control pull-left" style="width:400px;" type="text" name="menuUrl" id="menuUrl" value="@(Model != null ? Model.MenuUrl : "")" />
+                <a id="btnSettingsFlowStepList" style="display:inline-block;float:left;margin-left:15px;margin-top:6px;">设置查看节点</a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">菜单排序：</label>
+            <div class="col-xs-10 form-cell">
+                <input class="form-control" style="width:100px;" type="text" name="menuSort" value="@(Model != null ? Model.MenuSort : 0)" />
+            </div>
+        </div>
+        <div class="form-group" id="menuActionContainer" style="display:@((Model != null && !string.IsNullOrEmpty(Model.BelongModule) && Model.BelongModule != "-1") ? "block" : "none")">
+            <label style="padding-top:0px;" class="col-xs-2 control-label form-label">菜单操作：</label>
+            <div class="col-xs-10 forbidden-text-select form-cell">
+                <div class="checkbox-inline" style="padding-top:0px;" id="menuActionList">
+                    @if (Model != null && !string.IsNullOrEmpty(Model.BelongModule))
+                    {
+                        if (ViewBag.ActionTypeList != null && ViewBag.ActionTypeList.Count > 0)
+                        {
+                            foreach (DBActionTypeModel modelItem in ViewBag.ActionTypeList)
+                            {
+                                <label class="form-checkbox-label"><input type="checkbox" name="menuActionList" value="@modelItem.TypeCode" @Html.Raw(DataHelper.IsContains(modelItem.TypeCode, Model.ActionList) ? "checked=\"checked\"" : "") />@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</label>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <span style="padding-left:100px;">
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                <a class="btn btn-warning" style="margin-left:10px;" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回管理页面</a>
+            </span>
+        </div>
+    </form>
+</div>
+<div id="settingsFlowStepList" style="display:none;padding:20px;background-color:#ffffff;border:1px solid #CCCCCC;width:600px;border-radius:5px;">
+    <div style="padding:0px 0px 10px 0px">所有流程节点列表：</div>
+    @if (ViewBag.FlowStepList != null && ViewBag.FlowStepList.Count > 0)
+    {
+        <div class="checkbox-inline forbidden-text-select">
+            @foreach (DBFlowStepModel modelItem in ViewBag.FlowStepList)
+            {
+                <label style="display:inline-block;margin-top:10px;margin-right:45px;font-weight:normal;margin-bottom:0px;"><input type="checkbox" name="flowStepList" value="@modelItem.IdentityID"/>[<span style="display:inline-block">@Html.Raw(Server.HtmlEncode(modelItem.StepCode))</span>]<span style="display:inline-block">@Html.Raw(Server.HtmlEncode(modelItem.StepName))</span></label>
+            }
+        </div>
+        <div style="padding:20px 0px 0px 0px">
+            <input type="button" id="btnSettingsFlowStepData" value="设置" style="margin-right:10px;" />
+            <input type="button" id="btnCloseFlowStepData" value="取消" />
+        </div>
+    }
+</div>
+@section Scripts
+{   
+    <script type="text/javascript" src="~/JavaScripts/module/Menu/edit.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript">
+
+        var menuJsonText = "@Html.Raw(ViewBag.MenuJsonText)";
+        var menuJsonData = JSON.parse(menuJsonText);
+
+        var moduleJsonText = "@Html.Raw(ViewBag.ModuleJsonText)";
+        var moduleJsonData = JSON.parse(moduleJsonText);
+
+        var actionTypeJsonText = "@Html.Action("GetActionTypeJsonText")";
+        var actionTypeJsonData = JSON.parse(actionTypeJsonText);
+    </script>
+}
+

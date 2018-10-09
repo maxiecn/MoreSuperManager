@@ -1,0 +1,124 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model List<DBNoticeFullModel>
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+<div>
+    <div class="search">
+        <form action="@Url.Action("List")" class="form-horizontal" method="get">
+            <div class="pull-left" style="padding:0px;">
+                <button type="button" id="toolbarAdd" style="margin-right:5px;" class="btn btn-info"><i class="glyphicon glyphicon-plus" style="font-size:12px;padding-right : 10px;"></i>添加</button>
+                <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
+            </div>
+            <div class="input-group pull-right" style="padding:0px;width:@((ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0) ? 700 : 500)px;">
+                <input type="text" id="searchKey" name="searchKey" value="@ViewData["SearchKey"]" class="form-control" placeholder="输入关键字进行搜索！" />
+                <span class="input-group-btn" style="width : 200px;">
+                    <select class="form-control" name="noticeType">
+                        <option value="-1" selected>选择公告类别</option>
+                        @if (ViewBag.NoticeTypeList != null && ViewBag.NoticeTypeList.Count > 0)
+                        {
+                            foreach (DBKeyValueModel modelItem in ViewBag.NoticeTypeList)
+                            {
+                                <option value="@modelItem.Key" @Html.Raw((ViewData["NoticeType"] != null && ViewData["NoticeType"].ToString() == modelItem.Key.ToString()) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
+                            }
+                        }
+                    </select>
+                </span>
+                @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+                {
+                    <span class="input-group-btn" style="width:135px;">
+                        <select class="form-control" name="channelCode">
+                            <option value="-1">选择频道信息</option>
+                            @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                            {
+                                <option value="@modelItem.ChannelCode" @Html.Raw(ViewData["ChannelCode"] != null && ViewData["ChannelCode"].ToString() == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                            }
+                        </select>
+                    </span>
+                }
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-search"></span><i style="margin-left:10px;font-style:normal;">搜索</i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="list">
+        <form action="@Url.Action("MoreOperater")" class="form-horizontal" method="post" id="operaterForm">
+            <div class="panel panel-default">
+                <table id="tableList" class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th class="first">
+                                <input type="checkbox" style="margin-top:0px;margin-bottom:0px;" id="checkAllOrNoTop" />
+                            </th>
+                            <th>公告标题</th>
+                            <th>所属类别</th>
+                            <th>所属频道</th>
+                            <th>添加日期</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (DBNoticeFullModel modelItem in Model)
+                            {
+                                <tr id="@modelItem.IdentityID">
+                                    <td class="first">
+                                        <input type="checkbox" name="identityIDList" value="@modelItem.IdentityID" />
+                                    </td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.NoticeTitle))</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.NoticeTypeName))</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</td>
+                                    <td>@modelItem.NoticeDateTime.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <a data-id="@modelItem.IdentityID" class="operater-edit"><i class="glyphicon glyphicon-edit list-oper-button"></i>编辑</a>
+                                        <a data-id="@modelItem.IdentityID" class="operater-delete"><i class="glyphicon glyphicon-trash list-oper-pad-button"></i>删除</a>
+                                    </td>
+                                </tr>
+                            }
+                            <tr style="background-color:#ffffff;">
+                                <td class="first" style="vertical-align:middle;">
+                                    <input type="checkbox" id="checkAllOrNoBottom" />
+                                </td>
+                                <td colspan="5">
+                                    <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
+                                        <select class="form-control" id="operaterType" name="operaterType">
+                                            <option value="@MoreSuperManager.ENUM.OperaterTypeEnum.DELETE">删除</option>
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" id="btnOperaterSubmit">操作</button>
+                                        </span>
+                                    </div>
+                                    @if (ViewData["PageModel"] != null)
+                                    {
+                                        @Html.Partial("~/Areas/Manager/Views/Shared/_Pagination.cshtml", ViewData["PageModel"])
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="background-color:#ffffff;">
+                                <td colspan="6" class="list-non-data">
+                                    没有相关数据！
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display:none;">
+    <input type="hidden" id="operaterAddUrl" value="@Url.Action("Add")" />
+    <input type="hidden" id="operaterEditUrl" value="@Url.Action("Edit", new { identityID = -1 })" />
+    <input type="hidden" id="operaterDeleteUrl" value="@Url.Action("DeleteOperater", new { identityID = -1 })" />
+</div>
+

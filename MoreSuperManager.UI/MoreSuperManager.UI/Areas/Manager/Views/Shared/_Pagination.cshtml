@@ -1,0 +1,21 @@
+﻿@model MoreSuperManager.MODEL.ViewPageModel
+@if (Model.PageCount >= 1)
+{
+    @Html.Raw(Helper.Core.Library.PaginationHelper.Page(new Helper.Core.Library.PaginationData()
+    {
+        PageCount = Model.PageCount,
+        TotalCount = Model.TotalCount,
+        PageIndex = Model.PageIndex,
+        PageUrl = Model.PageUrl,
+        PageFormat = "-999",
+        ShowPageCount = 5,
+        PageFirstText = "首页",
+        PagePrevText = "前一页",
+        PageNextText = "下一页",
+        PageLastText = "尾页",
+        ClassName = "pagination pull-right",
+        Style = "margin-top:0px;margin-bottom:0px;",
+        IsShowRecords = true,
+        RecordsClassName = "pull-left page-records"
+    }))
+}

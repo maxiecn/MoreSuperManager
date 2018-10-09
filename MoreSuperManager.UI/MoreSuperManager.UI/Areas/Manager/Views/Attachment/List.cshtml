@@ -1,0 +1,118 @@
+﻿@using Helper.Core.Library
+@using MoreSuperManager.MODEL
+@model List<DBAttachmentModel>
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div>
+    <div class="search">
+        <form action="@Url.Action("List")" class="form-horizontal" method="post">
+            <div class="pull-left" style="padding:0px;">
+                <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
+            </div>
+            <div class="input-group pull-right" style="padding:0px;width:500px;">
+                <input type="text" id="searchKey" name="searchKey" value="@ViewData["SearchKey"]" class="form-control" placeholder="输入关键字进行搜索！" />
+                <span class="input-group-btn" style="width : 135px;">
+                    <select class="form-control" name="attachmentType">
+                        <option value="-1" selected>选择附件类型</option>
+                        @if (ViewBag.AttachmentTypeList != null && ViewBag.AttachmentTypeList.Count > 0)
+                        {
+                            foreach (DBKeyValueModel modelItem in ViewBag.AttachmentTypeList)
+                            {
+                                <option value="@modelItem.Key" @Html.Raw((ViewData["AttachmentType"] != null && ViewData["AttachmentType"].ToString() == modelItem.Key.ToString()) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
+                            }
+                        }
+                    </select>
+                </span>
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-search"></span><i style="margin-left:10px;font-style:normal;">搜索</i></button>
+                </span>
+            </div>
+        </form>
+    </div>
+    <div class="list">
+        <form action="@Url.Action("MoreOperater")" class="form-horizontal" method="post" id="operaterForm">
+            <div class="panel panel-default">
+                <table id="tableList" class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th class="first">
+                                <input type="checkbox" style="margin-top:0px;margin-bottom:0px;" id="checkAllOrNoTop" />
+                            </th>
+                            <th>缩略图</th>
+                            <th>文件路径</th>
+                            <th>文件大小</th>
+                            <th>日期</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (DBAttachmentModel modelItem in Model)
+                            {
+                                <tr id="@modelItem.IdentityID">
+                                    <td class="first">
+                                        <input type="checkbox" name="identityIDList" value="@modelItem.IdentityID" />
+                                    </td>
+                                    <td>
+                                        <a href="@modelItem.AttachmentPath" target="_blank">
+                                            @if(modelItem.AttachmentType == MoreSuperManager.ENUM.UploadTypeEnum.Cover)
+                                            { 
+                                            <img src="@modelItem.AttachmentPath" alt="" style="max-width:200px;max-height:100px;" />
+                                            }
+                                            else
+                                            {
+                                                <span>无缩略图</span>
+                                            }
+                                        </a>
+                                    </td>
+                                    <td>@modelItem.AttachmentName</td>
+                                    <td>@modelItem.AttachmentSize</td>
+                                    <td>@modelItem.AttachmentDate.ToString("yyyy-MM-dd hh:mm:ss")</td>
+                                    <td>
+                                        <a data-id="@modelItem.IdentityID" class="operater-delete"><i class="glyphicon glyphicon-trash list-oper-button"></i>删除</a>
+                                    </td>
+                                </tr>
+                            }
+                            <tr style="background-color:#ffffff;">
+                                <td class="first" style="vertical-align:middle;">
+                                    <input type="checkbox" id="checkAllOrNoBottom" />
+                                </td>
+                                <td colspan="5">
+                                    <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
+                                        <select class="form-control" id="operaterType" name="operaterType">
+                                            <option value="@MoreSuperManager.ENUM.OperaterTypeEnum.DELETE">删除</option>
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" id="btnOperaterSubmit">操作</button>
+                                        </span>
+                                    </div>
+                                    @if (ViewData["PageModel"] != null)
+                                    {
+                                        @Html.Partial("~/Areas/Manager/Views/Shared/_Pagination.cshtml", ViewData["PageModel"])
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="background-color:#ffffff;">
+                                <td colspan="6" class="list-non-data">
+                                    没有相关数据！
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div style="display:none;">
+    <input type="hidden" id="operaterDeleteUrl" value="@Url.Action("DeleteOperater", new { identityID = -1 })" />
+</div>
+

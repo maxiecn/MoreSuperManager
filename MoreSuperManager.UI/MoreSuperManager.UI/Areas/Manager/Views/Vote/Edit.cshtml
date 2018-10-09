@@ -1,0 +1,120 @@
+﻿@model MoreSuperManager.MODEL.DBVoteModel
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="operater forbidden-text-select" style="width:815px;padding:0px;">
+    <form action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = Model != null ? Model.IdentityID : 0 })" id="operaterForm" class="form-horizontal" method="post">
+        @Html.AntiForgeryToken()
+        <fieldset class="form-fieldset">
+            <legend class="form-legend">基本信息</legend>
+            <div class="form-group" style="padding-left:10px;">
+                <label class="col-xs-2 control-label form-label">投票标题：</label>
+                <div class="col-xs-10 form-cell">
+                    <input class="form-control" name="voteTitle" style="width:400px;" type="text" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.VoteTitle : ""))" />
+                </div>
+            </div>
+            <div class="form-group" style="padding-left:10px;">
+                <label class="col-xs-2 control-label form-label">所属分类：</label>
+                <div class="col-xs-10 form-cell">
+                    <select class="form-control" name="voteType" style="width:200px;">
+                        @if (ViewBag.VoteTypeList != null && ViewBag.VoteTypeList.Count > 0)
+                        {
+                            foreach (MoreSuperManager.MODEL.DBVoteTypeModel modelItem in ViewBag.VoteTypeList)
+                            {
+                                <option value="@modelItem.IdentityID" @Html.Raw(Model != null && Model.VoteType == modelItem.IdentityID ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="padding-left:10px;margin-bottom:0px;">
+                <label class="col-xs-2 control-label form-label">投票简介：</label>
+                <div class="col-xs-10 form-cell">
+                    <textarea class="form-control" name="voteSummary" style="width:400px;height:60px;">@Html.Raw(Server.HtmlEncode(Model != null ? Model.VoteSummary : ""))</textarea>
+                </div>
+            </div>
+        </fieldset>
+        <div id="voteContainer" class="form-group" style="padding-top:0px;width:815px;margin-left : 0px;"></div>
+        <div class="form-group forbidden-text-select" id="newVoteItem" style="cursor:pointer;width:815px;margin-left : 0px;text-align:center; border:1px dashed #0CA3F2;padding:15px 0px;">
+            <span>添加题库内容</span>
+        </div>
+        <div>
+            <input type="hidden" id="voteItemList" name="voteItemList" value="" />
+            <button type="button" id="btnSaveVote" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+            <a class="btn btn-warning" style="margin-left:10px;" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回投票管理</a>
+        </div>
+    </form>
+    <div id="voteItem" class="form-vote-item">
+        <form action="#" class="form-horizontal" method="post">
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">选项标题：</label>
+                <div class="col-xs-10 form-cell" style="width:310px;">
+                    <textarea class="form-control" style="height:60px;width:292px;" id="itemTitle"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label style="padding-top:0px;" class="col-xs-2 control-label form-label">选项类型：</label>
+                <div class="col-xs-10 form-inline form-cell" style="width:310px;padding-top:0px;">
+                    <div class="radio-inline pull-left" style="padding-top:0px;">
+                        <label class="form-radio-label"><input type="radio" name="itemType" value="1" checked="checked" />单选</label>
+                        <label class="form-radio-label"><input type="radio" name="itemType" value="2" />多选</label>
+                        <label class="form-radio-label" style="margin-right:28px;"><input type="radio" name="itemType" value="3" />文本</label>
+                    </div>
+                    <input class="form-control pull-left" id="itemMaxCount" type="text" style="width:60px;display:none;" value="" />
+                </div>
+            </div>
+            <div id="voteItemContainer">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label form-label">选择项一：</label>
+                    <div class="col-xs-10 form-cell" style="width:310px;">
+                        <input class="form-control" type="text" id="voteItemA" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label form-label">选择项二：</label>
+                    <div class="col-xs-10 form-cell" style="width:310px;">
+                        <input class="form-control" type="text" id="voteItemB" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label form-label">选择项三：</label>
+                    <div class="col-xs-10 form-cell" style="width:310px;">
+                        <input class="form-control" type="text" id="voteItemC" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label form-label">选择项四：</label>
+                    <div class="col-xs-10 form-cell" style="width:310px;">
+                        <input class="form-control" type="text" id="voteItemD" value="" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-xs-2 control-label form-label">选择项五：</label>
+                    <div class="col-xs-10 form-cell" style="width:310px;">
+                        <input class="form-control" type="text" id="voteItemE" value="" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <span style="padding-left:110px;">
+                    <button type="button" id="btnItemAdd" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                    <button type="button" id="btnItemCancel" class="btn btn-danger" style="margin-left:10px;"><i class="glyphicon glyphicon-off" style="font-size:12px;padding-right : 10px;"></i>取消</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+<div style="display:none;">
+    <input type="hidden" id="voteItemID" value="" />
+</div>
+@section Scripts
+{
+    <script type="text/javascript" src="~/JavaScripts/plugin.vote.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript" src="~/JavaScripts/module/Vote/edit.js?v=@SettingHelper.Version"></script>
+    <script type="text/javascript">
+        var voteJsonText = "@Html.Raw(ViewBag.VoteItemList)";
+        var voteJsonData = JSON.parse(voteJsonText);
+    </script>
+}
