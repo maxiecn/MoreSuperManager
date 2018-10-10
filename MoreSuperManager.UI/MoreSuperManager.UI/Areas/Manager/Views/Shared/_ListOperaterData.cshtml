@@ -1,0 +1,27 @@
+﻿@model MoreSuperManager.MODEL.ViewListOperaterModel
+
+<tr style="background-color:#ffffff;">
+    <td class="first" style="vertical-align:middle;">
+        <input type="checkbox" id="checkAllOrNoBottom" />
+    </td>
+    <td colspan="@Model.DataCount">
+        <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
+            <select class="form-control" id="operaterType" name="operaterType">
+                @if (Model.OperaterList != null && Model.OperaterList.Length > 0)
+                {
+                    foreach (string operaterType in Model.OperaterList)
+                    {
+                        <option value="@operaterType">@ConstHelper.GetOperaterName(operaterType)</option>
+                    }
+                }
+            </select>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="btnOperaterSubmit">操作</button>
+            </span>
+        </div>
+        @if (ViewData["PageModel"] != null)
+        {
+            @Html.Partial("~/Areas/Manager/Views/Shared/_Pagination.cshtml", ViewData["PageModel"])
+        }
+    </td>
+</tr>

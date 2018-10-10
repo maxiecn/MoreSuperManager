@@ -1,5 +1,6 @@
 ﻿@using Helper.Core.Library
 @using MoreSuperManager.MODEL
+@using MoreSuperManager.ENUM
 @model List<DBProjectFullModel>
 @{
     ViewBag.Title = "List";
@@ -95,33 +96,11 @@
                                     </td>
                                 </tr>
                             }
-                            <tr style="background-color:#ffffff;">
-                                <td class="first" style="vertical-align:middle;">
-                                    <input type="checkbox" id="checkAllOrNoBottom" />
-                                </td>
-                                <td colspan="6">
-                                    <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
-                                        <select class="form-control" id="operaterType" name="operaterType">
-                                            <option value="@MoreSuperManager.ENUM.OperaterTypeEnum.DELETE">删除</option>
-                                        </select>
-                                        <span class="input-group-btn">
-                                            <button class="btn btn-default" type="button" id="btnOperaterSubmit">操作</button>
-                                        </span>
-                                    </div>
-                                    @if (ViewData["PageModel"] != null)
-                                    {
-                                        @Html.Partial("~/Areas/Manager/Views/Shared/_Pagination.cshtml", ViewData["PageModel"])
-                                    }
-                                </td>
-                            </tr>
+                            @Html.Partial("~/Areas/Manager/Views/Shared/_ListOperaterData.cshtml", new ViewListOperaterModel() { DataCount = 6, OperaterList = new string[] { OperaterTypeEnum.DELETE } })
                         }
                         else
                         {
-                            <tr style="background-color:#ffffff;">
-                                <td colspan="7" class="list-non-data">
-                                    没有相关数据！
-                                </td>
-                            </tr>
+                            @Html.Partial("~/Areas/Manager/Views/Shared/_ListNoData.cshtml", 7)
                         }
                     </tbody>
                 </table>
