@@ -14,12 +14,12 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class ProjectTypeController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string searchKey = "", int pageIndex = 1)
+        public ActionResult List(string channelCode = "", string searchKey = "", int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
-            List<DBProjectTypeModel> modelList = DALFactory.ProjectType.Page(searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBProjectTypeFullModel> modelList = DALFactory.ProjectType.Page(this.GetChannelCode(channelCode), searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, SearchKey = searchKey }), null, null);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), DALFactory.Channel.ChannelList(), channelCode);
             return View(modelList);
         }
 
@@ -32,6 +32,10 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
+            if(this.IsSuperManager)
+            {
+                ViewBag.ChannelList = DALFactory.Channel.ChannelList();
+            }
             return View("Edit", identityID > 0 ? DALFactory.ProjectType.Select(identityID) : null);
         }
 
@@ -72,12 +76,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
 
         private ActionResult AddOrEditOperater(DBProjectTypeModel model)
         {
+            this.SetChannelCode<DBProjectTypeModel>(model);
+
             return this.OperaterConfirm(() =>
             {
                 return FilterFactory.ProjectType.Operater(model);
             }, () =>
             {
-                return DALFactory.ProjectType.Exists(model.TypeName, model.IdentityID);
+                return DALFactory.ProjectType.Exists(model.ChannelCode, model.TypeName, model.IdentityID);
             }, () =>
             {
                 return DALFactory.ProjectType.Operater(model);

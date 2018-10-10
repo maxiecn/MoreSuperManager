@@ -61,7 +61,7 @@ namespace MoreSuperManager.UI
             return dataList;
         }
 
-        public static string GetJsonText<T>(List<DBChannelModel> channelModelList, List<T> dataList, Func<T, object> keyFunc, Func<T, string> valueFunc, bool containsManager = false, Func<T, bool> exceptFunc = null, DBKeyValueModel rootItem = null) where T : IChannelModel
+        public static string GetJsonText<T>(List<DBChannelModel> channelModelList, List<T> dataList, Func<T, object> keyFunc, Func<T, string> valueFunc, Func<T, string> codeFunc = null, bool containsManager = false, Func<T, bool> exceptFunc = null, DBKeyValueModel rootItem = null, bool containsManagerData = false) where T : IChannelModel
         {
             List<string> channelCodeList = channelModelList.Select(p => p.ChannelCode).ToList();
             if (containsManager) channelCodeList.Insert(0, ChannelCodeTypeEnum.ALL);
@@ -85,7 +85,15 @@ namespace MoreSuperManager.UI
                     stringBuilder.Append(rootItem.Value);
                     stringBuilder.Append("\\\"}");
                 }
-                List<T> dataItemList = dataList.Where(p => p.ChannelCode == channelCode).ToList();
+                List<T> dataItemList = null;
+                if (containsManagerData && (string.IsNullOrEmpty(channelCode) && channelCode == ChannelCodeTypeEnum.ALL))
+                {
+                    dataItemList = dataList;
+                }
+                else
+                {
+                    dataItemList = dataList.Where(p => p.ChannelCode == channelCode).ToList();
+                }
                 if (dataItemList != null && dataItemList.Count > 0)
                 {
                     if (rootItem != null)
@@ -101,7 +109,14 @@ namespace MoreSuperManager.UI
                             stringBuilder.Append(keyFunc != null ? keyFunc(t) : "");
                             stringBuilder.Append("\\\",\\\"value\\\":\\\"");
                             stringBuilder.Append(valueFunc != null ? valueFunc(t) : "");
-                            stringBuilder.Append("\\\"}");
+                            stringBuilder.Append("\\\"");
+                            if(codeFunc != null)
+                            {
+                                stringBuilder.Append(",\\\"code\\\":\\\"");
+                                stringBuilder.Append(codeFunc(t));
+                                stringBuilder.Append("\\\"");
+                            }
+                            stringBuilder.Append("}");
                             if (itemIndex < dataItemList.Count - 1)
                             {
                                 stringBuilder.Append(",");

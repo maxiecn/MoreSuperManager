@@ -9,5 +9,6 @@ namespace MoreSuperManager.MODEL
     public class DBFlowFullModel : DBFlowModel
     {
         public string FlowTypeName { get; set; }
+        public string ChannelName { get; set; }
     }
 }

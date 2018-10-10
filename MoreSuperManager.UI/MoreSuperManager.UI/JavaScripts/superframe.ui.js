@@ -301,3 +301,23 @@ function SetCheckBoxListGetJsonData(jsonData, dataType, elementID, checkBoxName)
     }
     $("#" + elementID).html(html);
 }
+function SetRadioListGetJsonData(jsonData, dataType, elementID, checkBoxName) {
+    var html = "";
+    var itemList = jsonData[dataType];
+    if (itemList != null) {
+        for (var index = 0; index < itemList.length; index++) {
+            html += "<label style=\"display:inline-block;margin-right:35px;font-weight:normal;\"><input type=\"radio\" name=\"{checkBoxName}\" value=\"{value}\">{name}</label>".replace(/[{]checkBoxName[}]/gi, checkBoxName).replace(/[{]value[}]/gi, itemList[index].key).replace(/[{]name[}]/gi, itemList[index].value);
+        }
+    }
+    $("#" + elementID).html(html);
+}
+function SetRadioListGetJsonDataFormat(jsonData, dataType, elementID, checkBoxName, format) {
+    var html = "";
+    var itemList = jsonData[dataType];
+    if (itemList != null) {
+        for (var index = 0; index < itemList.length; index++) {
+            html += "<label style=\"display:inline-block;margin-right:35px;font-weight:normal;\"><input type=\"radio\" name=\"{checkBoxName}\" value=\"{value}\">{name}</label>".replace(/[{]checkBoxName[}]/gi, checkBoxName).replace(/[{]value[}]/gi, itemList[index].key).replace(/[{]name[}]/gi, format.replace(/[{]value[}]/gi, itemList[index].value));
+        }
+    }
+    $("#" + elementID).html(html);
+}

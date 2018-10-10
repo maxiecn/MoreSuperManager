@@ -15,20 +15,32 @@
                     <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
                 </div>
             </div>
-            <div class="input-group pull-right" style="padding:0px;width:500px;">
+            <div class="input-group pull-right" style="padding:0px;width:@((ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0) ? 700 : 500)px;">
                 <input type="text" id="searchKey" name="searchKey" value="@ViewData["SearchKey"]" class="form-control" placeholder="输入关键字进行搜索！" />
-                <span class="input-group-btn" style="width : 150px;">
+                <span class="input-group-btn" style="width : 200px;">
                     <select class="form-control" name="flowType">
                         <option value="-1" selected>选择流程类别</option>
                         @if (ViewBag.FlowTypeList != null && ViewBag.FlowTypeList.Count > 0)
                         {
-                            foreach (DBFlowTypeModel modelItem in ViewBag.FlowTypeList)
+                            foreach (DBKeyValueModel modelItem in ViewBag.FlowTypeList)
                             {
-                                <option value="@modelItem.IdentityID" @Html.Raw((ViewData["FlowType"] != null && ViewData["FlowType"].ToString() == modelItem.IdentityID.ToString()) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</option>
+                                <option value="@modelItem.Key" @Html.Raw((ViewData["FlowType"] != null && ViewData["FlowType"].ToString() == modelItem.Key.ToString()) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
                             }
                         }
                     </select>
                 </span>
+                @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+                {
+                    <span class="input-group-btn" style="width:135px;">
+                        <select class="form-control" name="channelCode">
+                            <option value="-1">选择频道信息</option>
+                            @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                            {
+                                <option value="@modelItem.ChannelCode" @Html.Raw(ViewData["ChannelCode"] != null && ViewData["ChannelCode"].ToString() == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                            }
+                        </select>
+                    </span>
+                }
                 <span class="input-group-btn">
                     <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-search"></span><i style="margin-left:10px;font-style:normal;">搜索</i></button>
                 </span>
@@ -46,6 +58,7 @@
                             </th>
                             <th>流程名称</th>
                             <th>流程类别</th>
+                            <th>所属频道</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -60,6 +73,7 @@
                                     </td>
                                     <td>@Html.Raw(Server.HtmlEncode(modelItem.FlowName))</td>
                                     <td>@Html.Raw(Server.HtmlEncode(modelItem.FlowTypeName))</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</td>
                                     <td>
                                         <a data-id="@modelItem.IdentityID" class="operater-auth"><i class="glyphicon glyphicon-eye-open list-oper-button"></i>角色授权</a>
                                         <a data-id="@modelItem.IdentityID" class="operater-edit-flow"><i class="glyphicon glyphicon-transfer list-oper-pad-button"></i>编辑步骤</a>
@@ -72,7 +86,7 @@
                                 <td class="first" style="vertical-align:middle;">
                                     <input type="checkbox" id="checkAllOrNoBottom" />
                                 </td>
-                                <td colspan="3">
+                                <td colspan="4">
                                     <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
                                         <select class="form-control" id="operaterType" name="operaterType">
                                             <option value="@MoreSuperManager.ENUM.OperaterTypeEnum.DELETE">删除</option>
@@ -91,7 +105,7 @@
                         else
                         {
                             <tr style="background-color:#ffffff;">
-                                <td colspan="4" class="list-non-data">
+                                <td colspan="5" class="list-non-data">
                                     没有相关数据！
                                 </td>
                             </tr>

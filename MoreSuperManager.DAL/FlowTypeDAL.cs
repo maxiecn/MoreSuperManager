@@ -23,9 +23,9 @@ namespace MoreSuperManager.DAL
                 return DataBaseHelper.Update<DBFlowTypeModel>(model, p => p.IdentityID == p.IdentityID, p => p.IdentityID, TABLE_NAME);
             }
         }
-        public bool Exists(string typeName, int identityID)
+        public bool Exists(string channelCode, string typeName, int identityID)
         {
-            return DataBaseHelper.Exists<DBFlowTypeModel>(new { TypeName = typeName }, p => p.IdentityID, p => p.TypeName == p.TypeName, identityID, TABLE_NAME);
+            return DataBaseHelper.Exists<DBFlowTypeModel>(new { TypeName = typeName, ChannelCode = channelCode }, p => p.IdentityID, p => p.ChannelCode == channelCode && p.TypeName == p.TypeName, identityID, TABLE_NAME);
         }
         public bool Delete(int identityID)
         {
@@ -38,16 +38,27 @@ namespace MoreSuperManager.DAL
         }
         public DBFlowTypeModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBFlowTypeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.TypeName, p.TypeSort }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBFlowTypeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.TypeName, p.TypeSort, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
         public List<DBFlowTypeModel> List()
         {
-            return DataBaseHelper.More<DBFlowTypeModel>(null, p => new { p.IdentityID, p.TypeName }, null, p => p.TypeSort, true, TABLE_NAME);
+            return DataBaseHelper.More<DBFlowTypeModel>(null, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
+        }
+        public List<DBFlowTypeModel> ChannelList(string channelCode)
+        {
+            return DataBaseHelper.More<DBFlowTypeModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, p => p.ChannelCode == p.ChannelCode, p => p.TypeSort, true, TABLE_NAME);
         }
 
-        public List<DBFlowTypeModel> Page(string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBFlowTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(" TypeName like '%");
@@ -58,8 +69,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, TypeName, TypeSort");
-            parameterList.Add("@Field", "");
+            parameterList.Add("@FieldSql", "IdentityID, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, TypeName, TypeSort, ChannelCode");
             parameterList.Add("@TableName", "T_FlowType");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);
@@ -67,7 +78,7 @@ namespace MoreSuperManager.DAL
             parameterList.Add("@WhereSql", whereSql);
             parameterList.Add("@OrderSql", "TypeSort desc");
 
-            return DataBaseHelper.ToEntityList<DBFlowTypeModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBFlowTypeFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

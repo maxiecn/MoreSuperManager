@@ -19,9 +19,9 @@ namespace MoreSuperManager.DAL
             {
                 transactionItemList.Add(new DataBaseTransactionItem()
                 {
-                    CommandText = "insert into T_Vote(VoteType, VoteTitle, VoteSummary)values(@VoteType, @VoteTitle, @VoteSummary);select SCOPE_IDENTITY();",
+                    CommandText = "insert into T_Vote(VoteType, VoteTitle, VoteSummary, ChannelCode)values(@VoteType, @VoteTitle, @VoteSummary, @ChannelCode);select SCOPE_IDENTITY();",
                     ExecuteType = DataBaseExecuteTypeEnum.ExecuteScalar,
-                    ParameterList = new { VoteType = model.VoteType, VoteTitle = model.VoteTitle, VoteSummary = model.VoteSummary },
+                    ParameterList = new { VoteType = model.VoteType, VoteTitle = model.VoteTitle, VoteSummary = model.VoteSummary, ChannelCode = model.ChannelCode },
                     OutputName = "VoteID"
                 });
             }
@@ -35,9 +35,9 @@ namespace MoreSuperManager.DAL
                 });
                 transactionItemList.Add(new DataBaseTransactionItem()
                 {
-                    CommandText = "update T_Vote set VoteType=@VoteType,  VoteTitle=@VoteTitle, VoteSummary=@VoteSummary where IdentityID=@IdentityID",
+                    CommandText = "update T_Vote set VoteType=@VoteType,  VoteTitle=@VoteTitle, VoteSummary=@VoteSummary, ChannelCode=@ChannelCode where IdentityID=@IdentityID",
                     ExecuteType = DataBaseExecuteTypeEnum.ExecuteNonQuery,
-                    ParameterList = new { VoteType = model.VoteType, VoteTitle = model.VoteTitle, VoteSummary = model.VoteSummary, IdentityID = model.IdentityID }
+                    ParameterList = new { VoteType = model.VoteType, VoteTitle = model.VoteTitle, VoteSummary = model.VoteSummary, ChannelCode = model.ChannelCode, IdentityID = model.IdentityID }
                 });
             }
             if (modelList != null && modelList.Count > 0)
@@ -74,13 +74,18 @@ namespace MoreSuperManager.DAL
         }
         public DBVoteModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBVoteModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.VoteType, p.VoteTitle, p.VoteSummary }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBVoteModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.VoteType, p.VoteTitle, p.VoteSummary, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
 
-        public List<DBVoteFullModel> Page(string searchKey, int voteType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBVoteFullModel> Page(string channelCode, string searchKey, int voteType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
-
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(string.Format(" VoteTitle like '%{0}%' ", searchKey));
@@ -96,8 +101,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, VoteTitle, VoteType, (select TypeName from T_VoteType with(nolock) where T_VoteType.IdentityID=T.VoteType) as VoteTypeName");
-            parameterList.Add("@Field", "IdentityID, VoteTitle, VoteType");
+            parameterList.Add("@FieldSql", "IdentityID, VoteTitle, VoteType, ChannelCode, (select TypeName from T_VoteType with(nolock) where T_VoteType.IdentityID=T.VoteType) as VoteTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, VoteTitle, VoteType, ChannelCode");
             parameterList.Add("@TableName", "T_Vote");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);

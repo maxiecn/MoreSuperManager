@@ -14,12 +14,12 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class FlowSymbolTypeController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string searchKey = "", int pageIndex = 1)
+        public ActionResult List(string channelCode = "", string searchKey = "", int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
-            List<DBFlowSymbolTypeModel> modelList = DALFactory.FlowSymbolType.Page(searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBFlowSymbolTypeFullModel> modelList = DALFactory.FlowSymbolType.Page(this.GetChannelCode(channelCode), searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, SearchKey = searchKey }), null, null);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), DALFactory.Channel.ChannelList(), channelCode);
 
             return View(modelList);
         }
@@ -33,6 +33,10 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
+            if(this.IsSuperManager)
+            {
+                ViewBag.ChannelList = DALFactory.Channel.ChannelList();
+            }
             return View("Edit", identityID > 0 ? DALFactory.FlowSymbolType.Select(identityID) : null);
         }
 
@@ -74,12 +78,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [NonAction]
         private ActionResult AddOrEditOperater(DBFlowSymbolTypeModel model)
         {
+            this.SetChannelCode<DBFlowSymbolTypeModel>(model);
+
             return this.OperaterConfirm(() =>
             {
                 return FilterFactory.FlowSymbolType.Operater(model);
             }, () =>
             {
-                return DALFactory.FlowSymbolType.Exists(model.TypeCode, model.IdentityID);
+                return DALFactory.FlowSymbolType.Exists(model.ChannelCode, model.TypeCode, model.IdentityID);
             }, () =>
             {
                 return DALFactory.FlowSymbolType.Operater(model);

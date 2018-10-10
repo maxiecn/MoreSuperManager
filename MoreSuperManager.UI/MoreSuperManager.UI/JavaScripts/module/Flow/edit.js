@@ -126,9 +126,15 @@ function FlowDesignManager(flowID, processData, saveCallback) {
 
 $(function () {
 
+    $("#channelCode").change(function () {
+        SetMenuListGetJsonData(flowTypeJsonData, $(this).val(), "flowType");
+        SetCheckBoxListGetJsonData(roleJsonData, $(this).val(), "menuActionList", "roleList");
+        SetRadioListGetJsonDataFormat(flowSymbolTypeJsonData, $(this).val(), "symbolListContainer", "symbolList", "<i class=\"{value}\"></i>");
+    });
+
     // 获取流程编号
     var flowID = $("#identityID").val();
-    new FlowDesignManager(flowID, processData, function (data) {
+    new FlowDesignManager(flowID, flowStepJsonData, function (data) {
         // 重新整理成后台使用的 数据结构
         var stepList = [];
         if (data != null) {
@@ -153,22 +159,7 @@ $(function () {
             ErrorAlert("请绘制流程步骤！");
             return;
         }
-
-        var vLeft = ($(window).width() - $("#addFlowInfo").width()) * 0.5;
         $("#flowStepList").val(JSON.stringify(stepList));
-        if (flowID == "0") {
-            // 显示保存面板
-            ShowMaskWindow("addFlowInfo", {
-                top: 100,
-                left: vLeft
-            });
-        } else {
-            // 提交表单
-            $("#operaterForm").submit();
-        }
-    });
-    $("#btnAddFlowInfo").click(function () {
-        HideMaskWindow("addFlowInfo");
         // 提交表单
         $("#operaterForm").submit();
     });

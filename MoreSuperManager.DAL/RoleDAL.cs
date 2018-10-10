@@ -45,7 +45,7 @@ namespace MoreSuperManager.DAL
         }
         public List<DBRoleModel> List()
         {
-            return DataBaseHelper.More<DBRoleModel>(null, p => new { p.IdentityID, p.RoleName }, null, null, true, TABLE_NAME);
+            return DataBaseHelper.More<DBRoleModel>(null, p => new { p.IdentityID, p.RoleName, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
 
         public List<DBRoleModel> ChannelList(string channelCode)

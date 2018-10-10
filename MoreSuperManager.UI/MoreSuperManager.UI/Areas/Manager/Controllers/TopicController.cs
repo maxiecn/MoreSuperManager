@@ -168,7 +168,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }, (DBTopicPositionTypeModel model) =>
             {
                 return model.TypeName;
-            }, false);
+            });
         }
     }
 }

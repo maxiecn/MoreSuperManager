@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace MoreSuperManager.MODEL
 {
-    public class DBProjectModel
+    public class DBProjectModel : IChannelModel
     {
         /// <summary>
         /// 项目 ID
         /// </summary>
         public int IdentityID { get; set; }
+        /// <summary>
+        /// 频道编号
+        /// </summary>
+        public string ChannelCode { get; set; }
         /// <summary>
         /// 项目分类
         /// </summary>

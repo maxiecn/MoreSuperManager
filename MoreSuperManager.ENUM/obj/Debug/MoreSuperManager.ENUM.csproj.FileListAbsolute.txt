@@ -2,4 +2,3 @@ E:\GitProject\MoreSuperManager\MoreSuperManager.ENUM\bin\Debug\MoreSuperManager.
 E:\GitProject\MoreSuperManager\MoreSuperManager.ENUM\bin\Debug\MoreSuperManager.ENUM.pdb
 E:\GitProject\MoreSuperManager\MoreSuperManager.ENUM\obj\Debug\MoreSuperManager.ENUM.dll
 E:\GitProject\MoreSuperManager\MoreSuperManager.ENUM\obj\Debug\MoreSuperManager.ENUM.pdb
-E:\GitProject\MoreSuperManager\MoreSuperManager.ENUM\obj\Debug\MoreSuperManager.ENUM.csprojResolveAssemblyReference.cache

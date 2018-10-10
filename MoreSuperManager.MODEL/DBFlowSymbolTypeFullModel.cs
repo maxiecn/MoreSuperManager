@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace MoreSuperManager.MODEL
 {
-    public class DBProjectFullModel : DBProjectModel
+    public class DBFlowSymbolTypeFullModel : DBFlowSymbolTypeModel
     {
-        public string ProjectTypeName { get; set; }
-        public string FlowName { get; set; }
-        public string FlowStepName { get; set; }
         public string ChannelName { get; set; }
     }
 }

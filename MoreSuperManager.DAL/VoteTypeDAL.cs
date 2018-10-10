@@ -38,16 +38,22 @@ namespace MoreSuperManager.DAL
         }
         public DBVoteTypeModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBVoteTypeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.TypeName, p.TypeSort }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBVoteTypeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.TypeName, p.TypeSort, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
         public List<DBVoteTypeModel> List()
         {
-            return DataBaseHelper.More<DBVoteTypeModel>(null, p => new { p.IdentityID, p.TypeName }, null, p => p.TypeSort, true, TABLE_NAME);
+            return DataBaseHelper.More<DBVoteTypeModel>(null, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
 
-        public List<DBVoteTypeModel> Page(string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBVoteTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(" TypeName like '%");
@@ -57,8 +63,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, TypeName, TypeSort");
-            parameterList.Add("@Field", "");
+            parameterList.Add("@FieldSql", "IdentityID, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, TypeName, TypeSort, ChannelCode");
             parameterList.Add("@TableName", "T_VoteType");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);
@@ -66,7 +72,7 @@ namespace MoreSuperManager.DAL
             parameterList.Add("@WhereSql", whereSql);
             parameterList.Add("@OrderSql", "TypeSort desc");
 
-            return DataBaseHelper.ToEntityList<DBVoteTypeModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBVoteTypeFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

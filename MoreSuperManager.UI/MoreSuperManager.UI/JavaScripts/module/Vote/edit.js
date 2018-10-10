@@ -80,7 +80,11 @@ function VoteItemTypeChange(itemType) {
 
 $(function () {
 
-    voteManager = new VoteManager(2, voteJsonData, "voteContainer");
+    $("#channelCode").change(function () {
+        SetMenuListGetJsonData(voteTypeJsonData, $(this).val(), "voteType");
+    });
+
+    voteManager = new VoteManager(2, voteItemJsonData, "voteContainer");
 
     $("#newVoteItem").click(function () {
         InsertItem();

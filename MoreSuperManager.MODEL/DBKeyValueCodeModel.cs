@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace MoreSuperManager.MODEL
 {
-    public class DBVoteFullModel : DBVoteModel
+    public class DBKeyValueCodeModel : DBKeyValueModel
     {
-        public string VoteTypeName { get; set; }
-        public string ChannelName { get; set; }
+        public string Code { get; set; }
     }
 }

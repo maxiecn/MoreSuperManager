@@ -17,28 +17,42 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class FlowController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string searchKey = "", int flowType = -1, int pageIndex = 1)
+        public ActionResult List(string channelCode = "", string searchKey = "", int flowType = -1, int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
-            List<DBFlowFullModel> modelList = DALFactory.Flow.Page(searchKey, flowType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, SearchKey = searchKey, FlowType = flowType }), null, null);
+            List<DBFlowFullModel> modelList = DALFactory.Flow.Page(this.GetChannelCode(channelCode), searchKey, flowType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, FlowType = flowType }), channelModelList, channelCode);
+            
             ViewData["FlowType"] = flowType;
-            ViewBag.FlowTypeList = DALFactory.FlowType.List();
+            ViewBag.FlowTypeList = this.InitFlowTypeKeyValueList(DALFactory.FlowType.List(), channelModelList, this.viewUserModel.ChannelCode);
             return View(modelList);
         }
 
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
-            ViewBag.FlowTypeList = DALFactory.FlowType.List();
-            return View("Edit", DALFactory.Flow.Select(identityID));
+            DBFlowModel model = DALFactory.Flow.Select(identityID);
+            if(model == null)
+            {
+                return this.RedirectToUrl("流程数据不正确！", Url.Action("List"), false, false);
+            }
+            ViewBag.FlowTypeList = DALFactory.FlowType.ChannelList(model.ChannelCode);
+            return View("Edit", model);
         }
 
         [RoleActionFilter]
         public ActionResult FlowAuth(int identityID = 0)
         {
-            ViewBag.RoleList = DALFactory.Role.List();
+            DBFlowModel model = DALFactory.Flow.Select(identityID);
+            if (model == null)
+            {
+                return this.RedirectToUrl("流程数据不正确！", Url.Action("List"), false, false);
+            }
+
+            ViewBag.RoleList = DALFactory.Role.ChannelList(model.ChannelCode);
             ViewBag.FlowID = identityID;
             return View(DALFactory.FlowStep.List(identityID));
         }
@@ -52,15 +66,36 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult FlowDesignEdit(int identityID = 0)
         {
+            DBFlowModel model = identityID > 0 ? DALFactory.Flow.Select(identityID) : null;
+
+            string channelCode = null;
+            List<DBChannelModel> channelModelList = null;
+
+            this.InitChannelViewData<DBFlowModel>(model, (p, k) =>
+            {
+                channelCode = p;
+                channelModelList = k;
+            }, () =>
+            {
+                return DALFactory.Channel.ChannelList();
+            });
+
+            List<DBFlowTypeModel> flowTypeModelList = DALFactory.FlowType.List();
+            List<DBRoleModel> roleModelList = DALFactory.Role.List();
+            List<DBFlowSymbolTypeModel> flowSymbolTypeModelList = DALFactory.FlowSymbolType.List();
+
+            ViewBag.FlowTypeJsonText = this.GetFlowTypeJsonText(channelModelList, flowTypeModelList);
+            ViewBag.RoleJsonText = this.GetRoleJsonText(channelModelList, roleModelList);
+            ViewBag.FlowSymbolTypeJsonText = this.GetFlowSymbolTypeJsonText(channelModelList, flowSymbolTypeModelList);
             // 角色列表
-            ViewBag.RoleList = DALFactory.Role.List();
+            ViewBag.RoleList = roleModelList.Where(p => p.ChannelCode == channelCode).ToList();
             // 可选符号列表
-            ViewBag.SymbolTypeList = DALFactory.FlowSymbolType.List();
+            ViewBag.SymbolTypeList = flowSymbolTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
             // 流程类别列表
-            ViewBag.FlowTypeList = (identityID == 0 ? DALFactory.FlowType.List() : null);
+            ViewBag.FlowTypeList = flowTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
             // 流程步骤数据
-            ViewBag.FlowStepData = this.GetFlowJsonText(identityID);
-            return View("FlowDesignEdit", identityID > 0 ? DALFactory.Flow.Select(identityID) : null);
+            ViewBag.FlowStepJsonText = this.GetFlowStepJsonText(identityID);
+            return View("FlowDesignEdit", model);
         }
 
         [RoleActionFilter]
@@ -155,7 +190,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         }
 
         [NonAction]
-        public string GetFlowJsonText(int identityID)
+        private string GetFlowStepJsonText(int identityID)
         {
             string format = "{{ \\\"total\\\": {0}, \\\"list\\\": [{1}] }}";
             if (identityID == 0) return string.Format(format, 0, "");
@@ -190,9 +225,52 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             return string.Format(format, modelList.Count, stringBuilder.ToString());
         }
 
+        private List<DBKeyValueModel> InitFlowTypeKeyValueList(List<DBFlowTypeModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
+        {
+            return ConstHelper.GetChannelKeyValueList<DBFlowTypeModel>(channelModelList, modelList, channelCode, (DBFlowTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBFlowTypeModel model) =>
+            {
+                return model.TypeName;
+            });
+        }
+        private string GetFlowTypeJsonText(List<DBChannelModel> channelModelList, List<DBFlowTypeModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBFlowTypeModel>(channelModelList, modelList, (DBFlowTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBFlowTypeModel model) =>
+            {
+                return model.TypeName;
+            });
+        }
+        private string GetRoleJsonText(List<DBChannelModel> channelModelList, List<DBRoleModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBRoleModel>(channelModelList, modelList, (DBRoleModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBRoleModel model) =>
+            {
+                return model.RoleName;
+            });
+        }
+        private string GetFlowSymbolTypeJsonText(List<DBChannelModel> channelModelList, List<DBFlowSymbolTypeModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBFlowSymbolTypeModel>(channelModelList, modelList, (DBFlowSymbolTypeModel model) =>
+            {
+                return model.TypeCode;
+            }, (DBFlowSymbolTypeModel model) =>
+            {
+                return model.TypeCode;
+            });
+        }
+
         [NonAction]
         private ActionResult FlowDesignAddOrEditOperater(DBFlowModel model, string flowStepList)
         {
+            this.SetChannelCode<DBFlowModel>(model);
+
             JsonSerializer jsonSerializer = new JsonSerializer();
             StringReader stringReader = new StringReader(flowStepList);
             List<DBFlowStepModel> dataList = jsonSerializer.Deserialize(new JsonTextReader(stringReader), typeof(List<DBFlowStepModel>)) as List<DBFlowStepModel>;

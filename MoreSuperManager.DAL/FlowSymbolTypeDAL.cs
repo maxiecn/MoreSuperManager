@@ -23,9 +23,9 @@ namespace MoreSuperManager.DAL
                 return DataBaseHelper.Update<DBFlowSymbolTypeModel>(model, p => p.IdentityID == p.IdentityID, p => p.IdentityID, TABLE_NAME);
             }
         }
-        public bool Exists(string typeCode, int identityID)
+        public bool Exists(string channelCode, string typeCode, int identityID)
         {
-            return DataBaseHelper.Exists<DBFlowSymbolTypeModel>(new { TypeCode = typeCode }, p => p.IdentityID, p => p.TypeCode == p.TypeCode, identityID, TABLE_NAME);
+            return DataBaseHelper.Exists<DBFlowSymbolTypeModel>(new { TypeCode = typeCode, ChannelCode = channelCode }, p => p.IdentityID, p => p.ChannelCode == channelCode && p.TypeCode == p.TypeCode, identityID, TABLE_NAME);
         }
         public bool Delete(int identityID)
         {
@@ -38,16 +38,23 @@ namespace MoreSuperManager.DAL
         }
         public DBFlowSymbolTypeModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBFlowSymbolTypeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.TypeCode, p.TypeName, p.TypeSort }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBFlowSymbolTypeModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.TypeCode, p.TypeName, p.TypeSort, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
         public List<DBFlowSymbolTypeModel> List()
         {
-            return DataBaseHelper.More<DBFlowSymbolTypeModel>(null, p => new { p.IdentityID, p.TypeCode, p.TypeName }, null, p => p.TypeSort, true, TABLE_NAME);
+            return DataBaseHelper.More<DBFlowSymbolTypeModel>(null, p => new { p.IdentityID, p.TypeCode, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
 
-        public List<DBFlowSymbolTypeModel> Page(string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBFlowSymbolTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(" TypeCode like '%");
@@ -59,8 +66,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, TypeCode, TypeName, TypeSort");
-            parameterList.Add("@Field", "");
+            parameterList.Add("@FieldSql", "IdentityID, TypeCode, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, TypeCode, TypeName, TypeSort, ChannelCode");
             parameterList.Add("@TableName", "T_FlowSymbolType");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);
@@ -68,7 +75,7 @@ namespace MoreSuperManager.DAL
             parameterList.Add("@WhereSql", whereSql);
             parameterList.Add("@OrderSql", "TypeSort desc");
 
-            return DataBaseHelper.ToEntityList<DBFlowSymbolTypeModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBFlowSymbolTypeFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

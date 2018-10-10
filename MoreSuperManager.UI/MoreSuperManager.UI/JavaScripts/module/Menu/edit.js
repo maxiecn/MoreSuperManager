@@ -5,6 +5,8 @@ $(function () {
     $("#channelCode").change(function () {
         SetMenuListGetJsonData(menuJsonData, $(this).val(), "parentID");
         SetMenuListGetJsonData(moduleJsonData, $(this).val(), "belongModule");
+        SetFlowStepGetJsonData(flowStepJsonData, $(this).val(), "flowStepListContainer");
+
         $("#belongModule").change();
     });
 
@@ -67,3 +69,13 @@ $(function () {
         HideMaskWindow("settingsFlowStepList");
     });
 });
+function SetFlowStepGetJsonData(jsonData, dataType, elementID) {
+    var html = "";
+    var itemList = jsonData[dataType];
+    if (itemList != null) {
+        for (var index = 0; index < itemList.length; index++) {
+            html += "<label style=\"display:inline-block;margin-top:10px;margin-right:45px;font-weight:normal;margin-bottom:0px;\"><input type=\"checkbox\" name=\"flowStepList\" value=\"{value}\">[<span style=\"display:inline-block\">{name}</span>]<span style=\"display:inline-block\">{code}</span></label>".replace(/[{]value[}]/gi, itemList[index].key).replace(/[{]name[}]/gi, itemList[index].value).replace(/[{]code[}]/gi, itemList[index].code);
+        }
+    }
+    $("#" + elementID).html(html);
+}

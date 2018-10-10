@@ -14,11 +14,11 @@ namespace MoreSuperManager.DAL
 
         public List<DBFlowStepModel> List(int flowID)
         {
-            return DataBaseHelper.More<DBFlowStepModel>(new { FlowID = flowID }, p => new { p.IdentityID, p.FlowID, p.StepCode, p.StepSymbol, p.StepName, p.StepAddrName, p.RoleList, p.StepList, p.NextStep, p.PositionTop, p.PositionLeft }, p => p.FlowID == p.FlowID, null, true, TABLE_NAME);
+            return DataBaseHelper.More<DBFlowStepModel>(new { FlowID = flowID }, p => new { p.IdentityID, p.FlowID, p.StepCode, p.StepSymbol, p.StepName, p.StepAddrName, p.RoleList, p.StepList, p.NextStep, p.PositionTop, p.PositionLeft, p.ChannelCode }, p => p.FlowID == p.FlowID, null, true, TABLE_NAME);
         }
         public List<DBFlowStepModel> List()
         {
-            return DataBaseHelper.More<DBFlowStepModel>(null, p => new { p.IdentityID, p.StepCode, p.StepName }, null, null, true, TABLE_NAME);
+            return DataBaseHelper.More<DBFlowStepModel>(null, p => new { p.IdentityID, p.StepCode, p.StepName, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
 
         public bool Operater(int flowID, List<DBFlowStepModel> modelList)

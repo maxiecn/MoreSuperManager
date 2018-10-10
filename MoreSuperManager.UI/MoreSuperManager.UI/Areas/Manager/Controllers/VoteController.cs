@@ -17,14 +17,15 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class VoteController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string searchKey = "", int voteType = -1, int pageIndex = 1)
+        public ActionResult List(string channelCode = "", string searchKey = "", int voteType = -1, int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
-            List<DBVoteFullModel> modelList = DALFactory.Vote.Page(searchKey, voteType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBVoteFullModel> modelList = DALFactory.Vote.Page(this.GetChannelCode(channelCode), searchKey, voteType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, SearchKey = searchKey, VoteType = voteType }), null, null);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, VoteType = voteType }), channelModelList, channelCode);
             ViewData["VoteType"] = voteType;
-            ViewBag.VoteTypeList = DALFactory.VoteType.List();
+            ViewBag.VoteTypeList = this.InitVoteTypeKeyValueList(DALFactory.VoteType.List(), channelModelList, this.viewUserModel.ChannelCode);
             return View(modelList);
         }
 
@@ -37,9 +38,28 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
-            ViewBag.VoteTypeList = DALFactory.VoteType.List();
-            ViewBag.VoteItemList = identityID > 0 ? this.GetVoteJsonText(identityID) : "{}";
-            return View("Edit", identityID > 0 ? DALFactory.Vote.Select(identityID) : null);
+            DBVoteModel model = identityID > 0 ? DALFactory.Vote.Select(identityID) : null;
+
+            string channelCode = null;
+            List<DBChannelModel> channelModelList = null;
+
+            this.InitChannelViewData<DBVoteModel>(model, (p, k) =>
+            {
+                channelCode = p;
+                channelModelList = k;
+            }, () =>
+            {
+                return DALFactory.Channel.ChannelList();
+            });
+
+            List<DBVoteTypeModel> voteTypeModelList = DALFactory.VoteType.List();
+
+            ViewBag.VoteTypeList = voteTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.VoteTypeJsonText = this.GetVoteTypeJsonText(channelModelList, voteTypeModelList);
+
+            ViewBag.VoteItemJsonText = identityID > 0 ? this.GetVoteItemJsonText(identityID) : "{}";
+
+            return View("Edit", model);
         }
 
         [RoleActionFilter]
@@ -78,7 +98,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         }
 
         [NonAction]
-        private string GetVoteJsonText(int identityID)
+        private string GetVoteItemJsonText(int identityID)
         {
             List<DBVoteItemModel> modelList = DALFactory.VoteItem.List(identityID);
             if (modelList == null || modelList.Count == 0) return "{}";
@@ -116,10 +136,22 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
             return string.Format("[{0}]", stringBuilder.ToString().TrimEnd(new char[] { ',' }));
         }
+        private string GetVoteTypeJsonText(List<DBChannelModel> channelModelList, List<DBVoteTypeModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBVoteTypeModel>(channelModelList, modelList, (DBVoteTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBVoteTypeModel model) =>
+            {
+                return model.TypeName;
+            });
+        }
 
         [NonAction]
         private ActionResult AddOrEditOperater(DBVoteModel model, string voteItemList)
         {
+            this.SetChannelCode<DBVoteModel>(model);
+
             JsonSerializer jsonSerializer = new JsonSerializer();
             List<DBVoteItemModel> dataList = jsonSerializer.Deserialize(new JsonTextReader(new StringReader(voteItemList)), typeof(List<DBVoteItemModel>)) as List<DBVoteItemModel>;
 
@@ -163,6 +195,17 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             {
                 return DALFactory.Vote.Operater(model, modelList);
             }, Url.Action("List"), model.IdentityID == 0 ? Url.Action("Add") : "", Url.Action("FlowDesign", new { identityID = model.IdentityID }));
+        }
+
+        private List<DBKeyValueModel> InitVoteTypeKeyValueList(List<DBVoteTypeModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
+        {
+            return ConstHelper.GetChannelKeyValueList<DBVoteTypeModel>(channelModelList, modelList, channelCode, (DBVoteTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBVoteTypeModel model) =>
+            {
+                return model.TypeName;
+            });
         }
     }
 }

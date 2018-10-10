@@ -45,6 +45,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
 
             List<ViewTreeMenuModel> menuModelList = TreeHelper.ToMenuList<ViewTreeMenuModel>(DALFactory.Menu.TreeList());
             List<DBModuleModel> moduleModelList = DALFactory.Module.List();
+            List<DBFlowStepModel> flowStepModelList = DALFactory.FlowStep.List();
 
             this.InitChannelViewData<DBMenuModel>(model, (p, k) =>
             {
@@ -64,6 +65,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             ViewBag.ModuleList = moduleList;
 
             ViewBag.ActionTypeJsonText = this.GetActionTypeJsonText();
+            ViewBag.FlowStepJsonText = this.GetFlowStepJsonText(channelModelList, flowStepModelList);
 
             if (model != null && !string.IsNullOrEmpty(model.BelongModule) && moduleList.Count > 0)
             {
@@ -73,7 +75,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                     ViewBag.ActionTypeList = DALFactory.ActionType.List(moduleModel.ActionList);
                 }
             }
-            ViewBag.FlowStepList = DALFactory.FlowStep.List();
+            if (string.IsNullOrEmpty(channelCode) || channelCode == "-1")
+            {
+                ViewBag.FlowStepList = flowStepModelList;
+            }
+            else
+            {
+                ViewBag.FlowStepList = flowStepModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
             ViewBag.ParentID = parentID;
 
             return View("Edit", model);
@@ -123,7 +132,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }, (ViewTreeMenuModel model) =>
             {
                 return model.LayerName;
-            }, true, (ViewTreeMenuModel model) =>
+            }, null, true, (ViewTreeMenuModel model) =>
             {
                 return model.IdentityID == identityID;
             }, new DBKeyValueModel() { Key = "0", Value = "根级菜单" });
@@ -136,7 +145,20 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }, (DBModuleModel model) =>
             {
                 return model.ModuleName;
-            }, true, null, new DBKeyValueModel() { Key = "-1", Value = "无" });
+            }, null, true, null, new DBKeyValueModel() { Key = "-1", Value = "无" });
+        }
+        private string GetFlowStepJsonText(List<DBChannelModel> channelModelList, List<DBFlowStepModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBFlowStepModel>(channelModelList, modelList, (DBFlowStepModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBFlowStepModel model) =>
+            {
+                return model.StepCode;
+            }, (DBFlowStepModel model) =>
+            {
+                return model.StepName;
+            }, true, null, null, true);
         }
         private string GetActionTypeJsonText()
         {

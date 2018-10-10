@@ -19,14 +19,20 @@ namespace MoreSuperManager.DAL
             {
                 transactionItemList.Add(new DataBaseTransactionItem()
                 {
-                    CommandText = "insert into T_Flow(FlowType, FlowName)values(@FlowType, @FlowName);select SCOPE_IDENTITY();",
+                    CommandText = "insert into T_Flow(ChannelCode, FlowType, FlowName)values(@ChannelCode, @FlowType, @FlowName);select SCOPE_IDENTITY();",
                     ExecuteType = DataBaseExecuteTypeEnum.ExecuteScalar,
-                    ParameterList = new { FlowType = model.FlowType, FlowName = model.FlowName },
+                    ParameterList = new { ChannelCode = model.ChannelCode, FlowType = model.FlowType, FlowName = model.FlowName },
                     OutputName = "FlowID"
                 });
             }
             else
             {
+                transactionItemList.Add(new DataBaseTransactionItem()
+                {
+                    CommandText = "update T_Flow set ChannelCode=@ChannelCode, FlowType=@FlowType, FlowName=@FlowName where IdentityID=@IdentityID",
+                    ExecuteType = DataBaseExecuteTypeEnum.ExecuteNonQuery,
+                    ParameterList = new { ChannelCode = model.ChannelCode, FlowType = model.FlowType, FlowName = model.FlowName, IdentityID = model.IdentityID },
+                });
                 transactionItemList.Add(new DataBaseTransactionItem()
                 {
                     CommandText = "delete from T_FlowStep where FlowID=@FlowID",
@@ -40,9 +46,9 @@ namespace MoreSuperManager.DAL
                 {
                     transactionItemList.Add(new DataBaseTransactionItem()
                     {
-                        CommandText = "insert into T_FlowStep(FlowID, StepCode,StepSymbol,StepName,StepAddrName,RoleList,StepList,NextStep,PositionTop,PositionLeft)values(@FlowID, @StepCode,@StepSymbol,@StepName,@StepAddrName,@RoleList,@StepList,@NextStep,@PositionTop,@PositionLeft)",
+                        CommandText = "insert into T_FlowStep(ChannelCode, FlowID, StepCode,StepSymbol,StepName,StepAddrName,RoleList,StepList,NextStep,PositionTop,PositionLeft)values(@ChannelCode, @FlowID, @StepCode,@StepSymbol,@StepName,@StepAddrName,@RoleList,@StepList,@NextStep,@PositionTop,@PositionLeft)",
                         ExecuteType = DataBaseExecuteTypeEnum.ExecuteNonQuery,
-                        ParameterList = new { FlowID = model.IdentityID, StepCode = stepModel.StepCode, StepSymbol = stepModel.StepSymbol, StepName = stepModel.StepName, StepAddrName = stepModel.StepAddrName, RoleList = StringHelper.PadChar(stepModel.RoleList, ","), StepList = StringHelper.PadChar(stepModel.StepList, ","), NextStep = stepModel.NextStep, PositionTop = stepModel.PositionTop, PositionLeft = stepModel.PositionLeft },
+                        ParameterList = new { ChannelCode = model.ChannelCode, FlowID = model.IdentityID, StepCode = stepModel.StepCode, StepSymbol = stepModel.StepSymbol, StepName = stepModel.StepName, StepAddrName = stepModel.StepAddrName, RoleList = StringHelper.PadChar(stepModel.RoleList, ","), StepList = StringHelper.PadChar(stepModel.StepList, ","), NextStep = stepModel.NextStep, PositionTop = stepModel.PositionTop, PositionLeft = stepModel.PositionLeft },
                         InputList = model.IdentityID == 0 ? new string[] { "FlowID" } : null
                     });
                 }
@@ -72,17 +78,23 @@ namespace MoreSuperManager.DAL
         }
         public DBFlowModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBFlowModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.FlowType, p.FlowName }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBFlowModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.FlowType, p.FlowName, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
         public List<DBFlowModel> List()
         {
-            return DataBaseHelper.More<DBFlowModel>(null, p => new { p.IdentityID, p.FlowName }, null, null, true, TABLE_NAME);
+            return DataBaseHelper.More<DBFlowModel>(null, p => new { p.IdentityID, p.FlowName, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
 
-        public List<DBFlowFullModel> Page(string searchKey, int flowType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBFlowFullModel> Page(string channelCode, string searchKey, int flowType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(string.Format(" FlowName like '%{0}%' ", searchKey));
@@ -98,8 +110,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, FlowType, FlowName, (select TypeName from T_FlowType with(nolock) where T_FlowType.IdentityID=T.FlowType) as FlowTypeName");
-            parameterList.Add("@Field", "IdentityID, FlowType, FlowName");
+            parameterList.Add("@FieldSql", "IdentityID, FlowType, FlowName, ChannelCode, (select TypeName from T_FlowType with(nolock) where T_FlowType.IdentityID=T.FlowType) as FlowTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, FlowType, FlowName, ChannelCode");
             parameterList.Add("@TableName", "T_Flow");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);

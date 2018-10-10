@@ -34,13 +34,18 @@ namespace MoreSuperManager.DAL
         }
         public DBProjectModel Select(int identityID)
         {
-            return DataBaseHelper.Single<DBProjectModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.ProjectType, p.ProjectName, p.FlowID, p.FlowStepID }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
+            return DataBaseHelper.Single<DBProjectModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.ProjectType, p.ProjectName, p.FlowID, p.FlowStepID, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
         }
 
-        public List<DBProjectFullModel> Page(string searchKey, int projectType, int flowID, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
+        public List<DBProjectFullModel> Page(string channelCode, string searchKey, int projectType, int flowID, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
-
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            {
+                stringBuilder.Append(" ChannelCode = '");
+                stringBuilder.Append(channelCode);
+                stringBuilder.Append("' and ");
+            }
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(string.Format(" ProjectName like '%{0}%' ", searchKey));
@@ -62,8 +67,8 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, ProjectName, ProjectType, FlowStepID, (select TypeName from T_ProjectType with(nolock) where T_ProjectType.IdentityID=T.ProjectType) as ProjectTypeName, (select FlowName from T_Flow with(nolock) where T_Flow.IdentityID=T.FlowID) as FlowName, (select StepName from T_FlowStep with(nolock) where T_FlowStep.IdentityID = T.FlowStepID) as FlowStepName");
-            parameterList.Add("@Field", "IdentityID, ProjectName, ProjectType, FlowID, FlowStepID");
+            parameterList.Add("@FieldSql", "IdentityID, ProjectName, ProjectType, FlowStepID, ChannelCode, (select TypeName from T_ProjectType with(nolock) where T_ProjectType.IdentityID=T.ProjectType) as ProjectTypeName, (select FlowName from T_Flow with(nolock) where T_Flow.IdentityID=T.FlowID) as FlowName, (select StepName from T_FlowStep with(nolock) where T_FlowStep.IdentityID = T.FlowStepID) as FlowStepName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add("@Field", "IdentityID, ProjectName, ProjectType, FlowID, FlowStepID, ChannelCode");
             parameterList.Add("@TableName", "T_Project");
             parameterList.Add("@PrimaryKey", "IdentityID");
             parameterList.Add("@PageIndex", pageIndex);

@@ -1,4 +1,5 @@
-﻿@model MoreSuperManager.MODEL.DBVoteTypeModel
+﻿@using MoreSuperManager.MODEL
+@model MoreSuperManager.MODEL.DBVoteTypeModel
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
@@ -7,6 +8,20 @@
 <div class="operater">
     <form action="@Url.Action(Model != null ? "EditOperater" : "AddOperater", new { identityID = (Model != null ? Model.IdentityID : 0) })" class="form-horizontal" method="post">
         @Html.AntiForgeryToken()
+        @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+        {
+            <div class="form-group">
+                <label class="col-xs-2 control-label form-label">所属频道：</label>
+                <div class="col-xs-10 form-cell">
+                    <select class="form-control" style="width:200px;" name="channelCode">
+                        @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                        {
+                            <option value="@modelItem.ChannelCode" @(Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        }
         <div class="form-group">
             <label class="col-xs-2 control-label form-label">类别名称：</label>
             <div class="col-xs-10 form-cell">

@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 
 namespace MoreSuperManager.MODEL
 {
-    public class DBFlowStepModel
+    public class DBFlowStepModel : IChannelModel
     {
         /// <summary>
         /// 自增编号
         /// </summary>
         public int IdentityID { get; set; }
+        /// <summary>
+        /// 频道编号
+        /// </summary>
+        public string ChannelCode { get; set; }
         /// <summary>
         /// 流程编号
         /// </summary>

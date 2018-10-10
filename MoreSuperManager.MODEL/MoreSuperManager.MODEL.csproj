@@ -46,7 +46,9 @@
     <Compile Include="DBFlowFullModel.cs" />
     <Compile Include="DBFlowModel.cs" />
     <Compile Include="DBFlowStepModel.cs" />
+    <Compile Include="DBFlowSymbolTypeFullModel.cs" />
     <Compile Include="DBFlowSymbolTypeModel.cs" />
+    <Compile Include="DBFlowTypeFullModel.cs" />
     <Compile Include="DBFlowTypeModel.cs" />
     <Compile Include="DBIndexMapperFullModel.cs" />
     <Compile Include="DBIndexMapperModel.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="DBNoticeTypeModel.cs" />
     <Compile Include="DBProjectFullModel.cs" />
     <Compile Include="DBProjectModel.cs" />
+    <Compile Include="DBProjectTypeFullModel.cs" />
     <Compile Include="DBProjectTypeModel.cs" />
     <Compile Include="DBRoleFullModel.cs" />
     <Compile Include="DBRoleModel.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="DBVoteItemModel.cs" />
     <Compile Include="DBVoteModel.cs" />
     <Compile Include="DBVoteTextModel.cs" />
+    <Compile Include="DBVoteTypeFullModel.cs" />
     <Compile Include="DBVoteTypeModel.cs" />
     <Compile Include="IChannelModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

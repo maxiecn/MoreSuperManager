@@ -14,32 +14,44 @@
                 <button type="button" id="toolbarAdd" style="margin-right:5px;" class="btn btn-info"><i class="glyphicon glyphicon-plus" style="font-size:12px;padding-right : 10px;"></i>添加</button>
                 <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
             </div>
-            <div class="input-group pull-right" style="padding:0px;width:600px;">
+            <div class="input-group pull-right" style="padding:0px;width:@((ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0) ? 800 : 600)px;">
                 <input type="text" id="searchKey" name="searchKey" value="@ViewData["SearchKey"]" class="form-control" placeholder="输入关键字进行搜索！" />
-                <span class="input-group-btn" style="width : 135px;">
+                <span class="input-group-btn" style="width : 200px;">
                     <select class="form-control" name="projectType">
                         <option value="-1" selected>选择项目类别</option>
                         @if (ViewBag.ProjectTypeList != null && ViewBag.ProjectTypeList.Count > 0)
                         {
-                            foreach (DBProjectTypeModel modelItem in ViewBag.ProjectTypeList)
+                            foreach (DBKeyValueModel modelItem in ViewBag.ProjectTypeList)
                             {
-                                <option value="@modelItem.IdentityID" @Html.Raw(ViewData["ProjectType"] != null && ViewData["ProjectType"].ToString() == modelItem.IdentityID.ToString() ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</option>
+                                <option value="@modelItem.Key" @Html.Raw(ViewData["ProjectType"] != null && ViewData["ProjectType"].ToString() == modelItem.Key.ToString() ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
                             }
                         }
                     </select>
                 </span>
-                <span class="input-group-btn" style="width : 135px;">
+                <span class="input-group-btn" style="width : 200px;">
                     <select class="form-control" name="flowID">
                         <option value="-1" selected>选择流程编号</option>
                         @if (ViewBag.FlowList != null && ViewBag.FlowList.Count > 0)
                         {
-                            foreach (DBFlowModel modelItem in ViewBag.FlowList)
+                            foreach (DBKeyValueModel modelItem in ViewBag.FlowList)
                             {
-                                <option value="@modelItem.IdentityID" @Html.Raw(ViewData["FlowID"] != null && ViewData["FlowID"].ToString() == modelItem.IdentityID.ToString() ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.FlowName))</option>
+                                <option value="@modelItem.Key" @Html.Raw(ViewData["FlowID"] != null && ViewData["FlowID"].ToString() == modelItem.Key.ToString() ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
                             }
                         }
                     </select>
                 </span>
+                @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+                {
+                    <span class="input-group-btn" style="width:135px;">
+                        <select class="form-control" name="channelCode">
+                            <option value="-1">选择频道信息</option>
+                            @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                            {
+                                <option value="@modelItem.ChannelCode" @Html.Raw(ViewData["ChannelCode"] != null && ViewData["ChannelCode"].ToString() == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                            }
+                        </select>
+                    </span>
+                }
                 <span class="input-group-btn">
                     <button class="btn btn-primary" style="width:80px;" type="submit"><span class="glyphicon glyphicon-search"></span><i style="margin-left:10px;font-style:normal;">搜索</i></button>
                 </span>
@@ -59,6 +71,7 @@
                             <th>项目分类</th>
                             <th>流程编号</th>
                             <th>当前流程</th>
+                            <th>所属频道</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -75,6 +88,7 @@
                                     <td>@Html.Raw(Server.HtmlEncode(modelItem.ProjectTypeName))</td>
                                     <td>@Html.Raw(Server.HtmlEncode(modelItem.FlowName))</td>
                                     <td>@Html.Raw(Server.HtmlEncode(modelItem.FlowStepName))</td>
+                                    <td>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</td>
                                     <td>
                                         <a data-id="@modelItem.IdentityID" class="operater-edit"><i class="glyphicon glyphicon-edit list-oper-button"></i>编辑</a>
                                         <a data-id="@modelItem.IdentityID" class="operater-delete"><i class="glyphicon glyphicon-trash list-oper-pad-button"></i>删除</a>
@@ -85,7 +99,7 @@
                                 <td class="first" style="vertical-align:middle;">
                                     <input type="checkbox" id="checkAllOrNoBottom" />
                                 </td>
-                                <td colspan="5">
+                                <td colspan="6">
                                     <div class="input-group pull-left" style="padding-left : 0px; width:300px;">
                                         <select class="form-control" id="operaterType" name="operaterType">
                                             <option value="@MoreSuperManager.ENUM.OperaterTypeEnum.DELETE">删除</option>
@@ -104,7 +118,7 @@
                         else
                         {
                             <tr style="background-color:#ffffff;">
-                                <td colspan="6" class="list-non-data">
+                                <td colspan="7" class="list-non-data">
                                     没有相关数据！
                                 </td>
                             </tr>

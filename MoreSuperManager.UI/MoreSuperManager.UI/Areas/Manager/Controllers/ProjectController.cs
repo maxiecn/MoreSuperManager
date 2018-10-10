@@ -14,16 +14,17 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class ProjectController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string searchKey = "", int projectType = -1, int flowID = -1, int pageIndex = 1)
+        public ActionResult List(string channelCode = "", string searchKey = "", int projectType = -1, int flowID = -1, int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
-            List<DBProjectFullModel> modelList = DALFactory.Project.Page(searchKey, projectType, flowID, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBProjectFullModel> modelList = DALFactory.Project.Page(this.GetChannelCode(channelCode), searchKey, projectType, flowID, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, SearchKey = searchKey, ProjectType = projectType, FlowID = flowID }), null, null);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, ProjectType = projectType, FlowID = flowID }), channelModelList, channelCode);
             ViewData["ProjectType"] = projectType;
             ViewData["FlowID"] = flowID;
-            ViewBag.ProjectTypeList = DALFactory.ProjectType.List();
-            ViewBag.FlowList = DALFactory.Flow.List();
+            ViewBag.ProjectTypeList = this.InitProjectTypeKeyValueList(DALFactory.ProjectType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            ViewBag.FlowList = this.InitFlowKeyValueList(DALFactory.Flow.List(), channelModelList, this.viewUserModel.ChannelCode);
             return View(modelList);
         }
 
@@ -36,9 +37,30 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
-            ViewBag.ProjectTypeList = DALFactory.ProjectType.List();
-            ViewBag.FlowList = DALFactory.Flow.List();
-            return View("Edit", identityID > 0 ? DALFactory.Project.Select(identityID) : null);
+            DBProjectModel model = identityID > 0 ? DALFactory.Project.Select(identityID) : null;
+
+            string channelCode = null;
+            List<DBChannelModel> channelModelList = null;
+
+            this.InitChannelViewData<DBProjectModel>(model, (p, k) =>
+            {
+                channelCode = p;
+                channelModelList = k;
+            }, () =>
+            {
+                return DALFactory.Channel.ChannelList();
+            });
+
+            List<DBProjectTypeModel> projectTypeModelList = DALFactory.ProjectType.List();
+            List<DBFlowModel> flowModelList = DALFactory.Flow.List();
+
+            ViewBag.ProjectTypeJsonText = this.GetProjectTypeJsonText(channelModelList, projectTypeModelList);
+            ViewBag.FlowJsonText = this.GetFlowJsonText(channelModelList, flowModelList);
+
+            ViewBag.ProjectTypeList = projectTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.FlowList = flowModelList.Where(p => p.ChannelCode == channelCode).ToList();
+
+            return View("Edit", model);
         }
 
         [RoleActionFilter]
@@ -86,6 +108,48 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             {
                 return DALFactory.Project.Operater(model);
             }, Url.Action("List"), model.IdentityID == 0 ? Url.Action("Add") : "", Url.Action("Edit", new { identityID = model.IdentityID }));
+        }
+
+        private List<DBKeyValueModel> InitProjectTypeKeyValueList(List<DBProjectTypeModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
+        {
+            return ConstHelper.GetChannelKeyValueList<DBProjectTypeModel>(channelModelList, modelList, channelCode, (DBProjectTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBProjectTypeModel model) =>
+            {
+                return model.TypeName;
+            });
+        }
+        private List<DBKeyValueModel> InitFlowKeyValueList(List<DBFlowModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
+        {
+            return ConstHelper.GetChannelKeyValueList<DBFlowModel>(channelModelList, modelList, channelCode, (DBFlowModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBFlowModel model) =>
+            {
+                return model.FlowName;
+            });
+        }
+
+        private string GetProjectTypeJsonText(List<DBChannelModel> channelModelList, List<DBProjectTypeModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBProjectTypeModel>(channelModelList, modelList, (DBProjectTypeModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBProjectTypeModel model) =>
+            {
+                return model.TypeName;
+            });
+        }
+        private string GetFlowJsonText(List<DBChannelModel> channelModelList, List<DBFlowModel> modelList)
+        {
+            return ConstHelper.GetJsonText<DBFlowModel>(channelModelList, modelList, (DBFlowModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBFlowModel model) =>
+            {
+                return model.FlowName;
+            });
         }
     }
 }

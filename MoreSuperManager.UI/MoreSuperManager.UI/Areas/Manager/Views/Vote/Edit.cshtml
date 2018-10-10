@@ -1,4 +1,5 @@
-﻿@model MoreSuperManager.MODEL.DBVoteModel
+﻿@using MoreSuperManager.MODEL
+@model DBVoteModel
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
@@ -9,6 +10,20 @@
         @Html.AntiForgeryToken()
         <fieldset class="form-fieldset">
             <legend class="form-legend">基本信息</legend>
+            @if (ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+            {
+                <div class="form-group" style="padding-left:10px;">
+                    <label class="col-xs-2 control-label form-label">所属频道：</label>
+                    <div class="col-xs-10 form-cell">
+                        <select class="form-control" name="channelCode" id="channelCode" style="width:200px;">
+                                @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                                {
+                                    <option value="@modelItem.ChannelCode" @Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                                }
+                        </select>
+                    </div>
+                </div>
+            }
             <div class="form-group" style="padding-left:10px;">
                 <label class="col-xs-2 control-label form-label">投票标题：</label>
                 <div class="col-xs-10 form-cell">
@@ -18,10 +33,10 @@
             <div class="form-group" style="padding-left:10px;">
                 <label class="col-xs-2 control-label form-label">所属分类：</label>
                 <div class="col-xs-10 form-cell">
-                    <select class="form-control" name="voteType" style="width:200px;">
+                    <select class="form-control" name="voteType" id="voteType" style="width:200px;">
                         @if (ViewBag.VoteTypeList != null && ViewBag.VoteTypeList.Count > 0)
                         {
-                            foreach (MoreSuperManager.MODEL.DBVoteTypeModel modelItem in ViewBag.VoteTypeList)
+                            foreach (DBVoteTypeModel modelItem in ViewBag.VoteTypeList)
                             {
                                 <option value="@modelItem.IdentityID" @Html.Raw(Model != null && Model.VoteType == modelItem.IdentityID ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</option>
                             }
@@ -114,7 +129,10 @@
     <script type="text/javascript" src="~/JavaScripts/plugin.vote.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript" src="~/JavaScripts/module/Vote/edit.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript">
-        var voteJsonText = "@Html.Raw(ViewBag.VoteItemList)";
-        var voteJsonData = JSON.parse(voteJsonText);
+        var voteItemJsonText = "@Html.Raw(ViewBag.VoteItemJsonText)";
+        var voteItemJsonData = JSON.parse(voteItemJsonText);
+
+        var voteTypeJsonText = "@Html.Raw(ViewBag.VoteTypeJsonText)";
+        var voteTypeJsonData = JSON.parse(voteTypeJsonText);
     </script>
 }

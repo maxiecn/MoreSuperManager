@@ -12,12 +12,53 @@
 }
 
 <div style="position:fixed;left:15px;top:15px;background-color:#ffffff;border:1px solid #cccccc;border-radius:5px;padding:15px;z-index:99;">
-    <div>
-        <button type="button" id="btnSaveFlow" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存设计</button>
-    </div>
-    <div style="margin-top:15px;">
-        <a class="btn btn-warning" href="@Url.Action("List")"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回管理页面</a>
-    </div>
+
+    <form action="@Url.Action(Model != null ? "FlowDesignEditOperater" : "FlowDesignAddOperater")" id="operaterForm" method="post" class="form-horizontal" style="padding-right:30px;">
+        @Html.AntiForgeryToken()
+        @if(ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0)
+        { 
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">流程类别：</label>
+            <div class="col-xs-10 form-cell" style="width:200px;">
+                <select class="form-control" id="channelCode" name="channelCode">
+                    @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
+                    {
+                        <option value="@modelItem.ChannelCode" @(Html.Raw(Model != null && Model.ChannelCode == modelItem.ChannelCode ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>
+                    }
+                </select>
+            </div>
+        </div>
+        }
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">流程名称：</label>
+            <div class="col-xs-10 form-cell" style="width:200px;">
+                <input class="form-control" id="flowName" name="flowName" type="text" value="@Html.Raw(Server.HtmlEncode(Model != null ? Model.FlowName : ""))" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">流程类别：</label>
+            <div class="col-xs-10 form-cell" style="width:200px;">
+                <select class="form-control" id="flowType" name="flowType">
+                    @if (ViewBag.FlowTypeList != null && ViewBag.FlowTypeList.Count > 0)
+                    {
+                        foreach (DBFlowTypeModel modelItem in ViewBag.FlowTypeList)
+                        {
+                            <option value="@modelItem.IdentityID" @Html.Raw((Model != null && Model.FlowType == modelItem.IdentityID) ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <span style="padding-left:100px;">
+                <button type="button" class="btn btn-primary" id="btnSaveFlow"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+                <a class="btn btn-warning" href="@Url.Action("List")" style="margin-left:10px;"><i class="glyphicon glyphicon-share-alt" style="padding-right:10px;"></i>返回管理页面</a>
+                <input type="hidden" id="addStepStatus" value="0" />
+                <input type="hidden" id="identityID" name="identityID" value="@(Model != null ? Model.IdentityID : 0)" />
+                <input type="hidden" id="flowStepList" name="flowStepList" value="" />
+            </span>
+        </div>
+    </form>
 </div>
 
 <!-- 节点右键菜单开始 -->
@@ -47,7 +88,7 @@
         <div class="form-group">
             <label class="col-xs-2 control-label form-label">步骤符号：</label>
             <div class="col-xs-10 form-cell" style="width:280px;padding-left:0px;">
-                <div class="radio-inline forbidden-text-select">
+                <div class="radio-inline forbidden-text-select" id="symbolListContainer">
                     @if (ViewBag.SymbolTypeList != null && ViewBag.SymbolTypeList.Count > 0)
                     {
                         int symbolIndex = 0;
@@ -108,41 +149,6 @@
     </form>
 </div>
 <!-- 添加节点结束 -->
-<!-- 添加流程信息开始 -->
-<div id="addFlowInfo" style="display:none; width:330px; border:1px solid #cccccc;border-radius:5px;background-color:#ffffff;padding:20px;">
-    <form action="@Url.Action(Model != null ? "FlowDesignEditOperater" : "FlowDesignAddOperater")" id="operaterForm" method="post" class="form-horizontal">
-        @Html.AntiForgeryToken()
-        <div class="form-group">
-            <label class="col-xs-2 control-label form-label">流程名称：</label>
-            <div class="col-xs-10 form-cell" style="width:200px;">
-                <input class="form-control" id="flowName" name="flowName" type="text" value="" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-xs-2 control-label form-label">流程类别：</label>
-            <div class="col-xs-10" style="width:200px;padding:0px;">
-                <select class="form-control" id="flowType" name="flowType">
-                    @if (ViewBag.FlowTypeList != null && ViewBag.FlowTypeList.Count > 0)
-                    {
-                        foreach (DBFlowTypeModel modelItem in ViewBag.FlowTypeList)
-                        {
-                            <option value="@modelItem.IdentityID">@Html.Raw(Server.HtmlEncode(modelItem.TypeName))</option>
-                        }
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <span style="padding-left:100px;">
-                <button type="button" class="btn btn-primary" id="btnAddFlowInfo"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>添加</button>
-                <input type="hidden" id="addStepStatus" value="0" />
-                <input type="hidden" id="identityID" name="identityID" value="@(Model != null ? Model.IdentityID : 0)" />
-                <input type="hidden" id="flowStepList" name="flowStepList" value="" />
-            </span>
-        </div>
-    </form>
-</div>
-<!-- 添加流程信息结束 -->
 
 @section Scripts
 {
@@ -150,9 +156,18 @@
     <script type="text/javascript" src="~/JavaScripts/plugin.flowdesign.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript" src="~/JavaScripts/module/Flow/edit.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript">
-            // 初始化步骤数据
-            var processJsonText = "@Html.Raw(ViewBag.FlowStepData)";
-            var processData = JSON.parse(processJsonText);
+        // 初始化步骤数据
+        var flowStepJsonText = "@Html.Raw(ViewBag.FlowStepJsonText)";
+        var flowStepJsonData = JSON.parse(flowStepJsonText);
+
+        var flowTypeJsonText = "@Html.Raw(ViewBag.FlowTypeJsonText)";
+        var flowTypeJsonData = JSON.parse(flowTypeJsonText);
+
+        var roleJsonText = "@Html.Raw(ViewBag.RoleJsonText)";
+        var roleJsonData = JSON.parse(roleJsonText);
+
+        var flowSymbolTypeJsonText = "@Html.Raw(ViewBag.FlowSymbolTypeJsonText)";
+        var flowSymbolTypeJsonData = JSON.parse(flowSymbolTypeJsonText);
     </script>
 }
 

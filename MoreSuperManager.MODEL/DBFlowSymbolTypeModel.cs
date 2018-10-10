@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace MoreSuperManager.MODEL
 {
-    public class DBFlowSymbolTypeModel
+    public class DBFlowSymbolTypeModel : IChannelModel
     {
         public int IdentityID { get; set; }
+        /// <summary>
+        /// 频道编号
+        /// </summary>
+        public string ChannelCode { get; set; }
         /// <summary>
         /// 符号编号
         /// </summary>

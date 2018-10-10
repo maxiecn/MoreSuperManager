@@ -14,12 +14,12 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class FlowTypeController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string searchKey = "", int pageIndex = 1)
+        public ActionResult List(string channelCode = "", string searchKey = "", int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
-            List<DBFlowTypeModel> modelList = DALFactory.FlowType.Page(searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
+            List<DBFlowTypeFullModel> modelList = DALFactory.FlowType.Page(this.GetChannelCode(channelCode), searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, SearchKey = searchKey }), null, null);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), DALFactory.Channel.ChannelList(), channelCode);
 
             return View(modelList);
         }
@@ -33,6 +33,10 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [RoleActionFilter]
         public ActionResult Edit(int identityID = 0)
         {
+            if(this.IsSuperManager)
+            {
+                ViewBag.ChannelList = DALFactory.Channel.ChannelList();
+            }
             return View("Edit", identityID > 0 ? DALFactory.FlowType.Select(identityID) : null);
         }
 
@@ -74,12 +78,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         [NonAction]
         private ActionResult AddOrEditOperater(DBFlowTypeModel model)
         {
+            this.SetChannelCode<DBFlowTypeModel>(model);
+
             return this.OperaterConfirm(() =>
             {
                 return FilterFactory.FlowType.Operater(model);
             }, () =>
             {
-                return DALFactory.FlowType.Exists(model.TypeName, model.IdentityID);
+                return DALFactory.FlowType.Exists(model.ChannelCode, model.TypeName, model.IdentityID);
             }, () =>
             {
                 return DALFactory.FlowType.Operater(model);

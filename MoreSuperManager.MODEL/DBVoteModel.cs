@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace MoreSuperManager.MODEL
 {
-    public class DBVoteModel
+    public class DBVoteModel : IChannelModel
     {
         public int IdentityID { get; set; }
+        /// <summary>
+        /// 所属频道
+        /// </summary>
+        public string ChannelCode { get; set; }
         /// <summary>
         /// 投票类别
         /// </summary>

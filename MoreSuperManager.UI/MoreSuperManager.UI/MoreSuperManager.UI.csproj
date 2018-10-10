@@ -823,6 +823,7 @@
     <Content Include="JavaScripts\module\Flow\edit.js" />
     <Content Include="JavaScripts\module\Flow\list.js" />
     <Content Include="JavaScripts\module\IndexMapper\edit.js" />
+    <Content Include="JavaScripts\module\Project\edit.js" />
     <Content Include="JavaScripts\module\LinkFriend\edit.js" />
     <Content Include="JavaScripts\module\Menu\edit.js" />
     <Content Include="JavaScripts\module\Menu\list.js" />

@@ -118,7 +118,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }, (DBTopicTypeModel model) =>
             {
                 return model.TypeName;
-            }, false, (DBTopicTypeModel model) =>
+            }, null, false, (DBTopicTypeModel model) =>
             {
                 return model.IdentityID == identityID;
             }, new DBKeyValueModel() { Key = "0", Value = "根级类别" });
