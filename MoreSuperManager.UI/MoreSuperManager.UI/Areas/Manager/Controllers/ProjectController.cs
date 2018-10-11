@@ -23,8 +23,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, ProjectType = projectType, FlowID = flowID }), channelModelList, channelCode);
             ViewData["ProjectType"] = projectType;
             ViewData["FlowID"] = flowID;
-            ViewBag.ProjectTypeList = this.InitProjectTypeKeyValueList(DALFactory.ProjectType.List(), channelModelList, this.viewUserModel.ChannelCode);
-            ViewBag.FlowList = this.InitFlowKeyValueList(DALFactory.Flow.List(), channelModelList, this.viewUserModel.ChannelCode);
+            if (this.IsSuperManager)
+            {
+                ViewBag.ProjectTypeList = this.InitProjectTypeKeyValueList(DALFactory.ProjectType.List(), channelModelList, this.viewUserModel.ChannelCode);
+                ViewBag.FlowList = this.InitFlowKeyValueList(DALFactory.Flow.List(), channelModelList, this.viewUserModel.ChannelCode);
+            }
+            else
+            {
+                ViewBag.ProjectTypeList = this.InitProjectTypeKeyValueList(DALFactory.ProjectType.ChannelList(this.viewUserModel.ChannelCode), channelModelList, this.viewUserModel.ChannelCode);
+                ViewBag.FlowList = this.InitFlowKeyValueList(DALFactory.Flow.ChannelList(this.viewUserModel.ChannelCode), channelModelList, this.viewUserModel.ChannelCode);
+            }
             return View(modelList);
         }
 
@@ -54,7 +62,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             List<DBProjectTypeModel> projectTypeModelList = null;
             List<DBFlowModel> flowModelList = null;
 
-            if(this.IsSuperManager)
+            if (this.IsSuperManager)
             {
                 projectTypeModelList = DALFactory.ProjectType.List();
                 flowModelList = DALFactory.Flow.List();
@@ -68,9 +76,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             ViewBag.ProjectTypeJsonText = this.GetProjectTypeJsonText(channelModelList, projectTypeModelList);
             ViewBag.FlowJsonText = this.GetFlowJsonText(channelModelList, flowModelList);
 
-            ViewBag.ProjectTypeList = projectTypeModelList;
-            ViewBag.FlowList = flowModelList;
-
+            if (this.IsSuperManager)
+            {
+                ViewBag.ProjectTypeList = projectTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+                ViewBag.FlowList = flowModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
+            else
+            {
+                ViewBag.ProjectTypeList = projectTypeModelList;
+                ViewBag.FlowList = flowModelList;
+            }
             return View("Edit", model);
         }
 

@@ -20,7 +20,7 @@
                 {
                     <span class="input-group-btn" style="width:135px;">
                         <select class="form-control" name="channelCode">
-                            <option value="-1">选择频道信息</option>
+                            <option value="-2">选择频道信息</option>
                             @foreach (DBChannelModel modelItem in ViewBag.ChannelList)
                             {
                                 <option value="@modelItem.ChannelCode" @Html.Raw(ViewData["ChannelCode"] != null && ViewData["ChannelCode"].ToString() == modelItem.ChannelCode ? "selected=\"selected\"" : "")>@Html.Raw(Server.HtmlEncode(modelItem.ChannelName))</option>

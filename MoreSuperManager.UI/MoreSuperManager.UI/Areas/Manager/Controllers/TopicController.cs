@@ -23,7 +23,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, TopicType = topicType, TopicPosition = topicPositionType, TopicStatus = topicStatus }), channelModelList, channelCode);
 
-            ViewBag.TopicTypeList = InitTopicTypeKeyValueList(TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList()), channelModelList, this.viewUserModel.ChannelCode);
+            if (this.IsSuperManager)
+            {
+                ViewBag.TopicTypeList = InitTopicTypeKeyValueList(TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList()), channelModelList, this.viewUserModel.ChannelCode);
+            }
+            else
+            {
+                ViewBag.TopicTypeList = InitTopicTypeKeyValueList(TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.ChannelList(this.viewUserModel.ChannelCode)), channelModelList, this.viewUserModel.ChannelCode);
+            }
             ViewBag.PositionTypeList = DALFactory.TopicPositionType.List();
             ViewBag.StatusTypeList = new List<DBKeyValueModel>()
             {
@@ -63,7 +70,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             List<DBTopicPositionTypeModel> topicPositionTypeModelList = null;
             List<ViewTreeTopicTypeModel> topicTypeModelList = null;
 
-            if(this.IsSuperManager)
+            if (this.IsSuperManager)
             {
                 topicPositionTypeModelList = DALFactory.TopicPositionType.List();
                 topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList());
@@ -77,9 +84,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             ViewBag.TopicTypeJsonText = this.GetTopicTypeJsonText(channelModelList, topicTypeModelList);
             ViewBag.TopicPositionTypeJsonText = this.GetTopicPositionTypeJsonText(channelModelList, topicPositionTypeModelList);
 
-            ViewBag.TopicTypeList = topicTypeModelList;
-            ViewBag.PositionTypeList = topicPositionTypeModelList;
-
+            if (this.IsSuperManager)
+            {
+                ViewBag.TopicTypeList = topicTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+                ViewBag.PositionTypeList = topicPositionTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
+            else
+            {
+                ViewBag.TopicTypeList = topicTypeModelList;
+                ViewBag.PositionTypeList = topicPositionTypeModelList;
+            }
             return View("Edit", model);
         }
 

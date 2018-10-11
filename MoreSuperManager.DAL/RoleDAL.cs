@@ -56,7 +56,7 @@ namespace MoreSuperManager.DAL
         public List<DBRoleFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
+            if (!string.IsNullOrEmpty(channelCode) && channelCode != "-2")
             {
                 stringBuilder.Append(" ChannelCode = '");
                 stringBuilder.Append(channelCode);

@@ -67,7 +67,7 @@ namespace MoreSuperManager.UI
             return OperaterKeyValueDict[operaterType];
         }
 
-        public static List<DBChannelModel> ChannelList(List<DBChannelModel> dataList)
+        public static List<DBChannelModel> GetChannelList(List<DBChannelModel> dataList)
         {
             dataList.Insert(0, new DBChannelModel() { ChannelCode = ChannelCodeTypeEnum.ALL, ChannelName = ChannelCodeTypeEnum.ALLNAME });
             return dataList;
@@ -157,34 +157,33 @@ namespace MoreSuperManager.UI
 
             if (KeyValueDict != null && KeyValueDict.Count > 0)
             {
-                int typeIndex = 0;
+                int dictIndex = 0;
                 foreach (KeyValuePair<int, List<DBKeyValueModel>> keyValueItem in KeyValueDict)
                 {
                     stringBuilder.Append("\\\"");
                     stringBuilder.Append(keyValueItem.Key);
                     stringBuilder.Append("\\\":[");
 
-                    List<DBKeyValueModel> keyValueList = keyValueItem.Value;
-                    int keyValueCount = keyValueList.Count;
-                    for (int index = 0; index < keyValueCount; index++)
+                    List<DBKeyValueModel> dataList = keyValueItem.Value;
+                    for (int index = 0; index < dataList.Count; index++)
                     {
                         stringBuilder.Append("{\\\"key\\\":\\\"");
-                        stringBuilder.Append(keyValueList[index].Key);
+                        stringBuilder.Append(dataList[index].Key);
                         stringBuilder.Append("\\\",\\\"value\\\":\\\"");
-                        stringBuilder.Append(keyValueList[index].Value);
+                        stringBuilder.Append(dataList[index].Value);
                         stringBuilder.Append("\\\"}");
-                        if (index < keyValueCount - 1)
+                        if (index < dataList.Count - 1)
                         {
                             stringBuilder.Append(",");
                         }
                     }
 
                     stringBuilder.Append("]");
-                    if (typeIndex < KeyValueDict.Count - 1)
+                    if (dictIndex < KeyValueDict.Count - 1)
                     {
                         stringBuilder.Append(",");
                     }
-                    typeIndex++;
+                    dictIndex++;
                 }
             }
 

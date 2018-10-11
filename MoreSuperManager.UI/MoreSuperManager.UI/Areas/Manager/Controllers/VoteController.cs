@@ -25,7 +25,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, VoteType = voteType }), channelModelList, channelCode);
             ViewData["VoteType"] = voteType;
-            ViewBag.VoteTypeList = this.InitVoteTypeKeyValueList(DALFactory.VoteType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            if (this.IsSuperManager)
+            {
+                ViewBag.VoteTypeList = this.InitVoteTypeKeyValueList(DALFactory.VoteType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            }
+            else
+            {
+                ViewBag.VoteTypeList = this.InitVoteTypeKeyValueList(DALFactory.VoteType.ChannelList(this.viewUserModel.ChannelCode), channelModelList, this.viewUserModel.ChannelCode);
+            }
             return View(modelList);
         }
 
@@ -54,7 +61,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
 
             List<DBVoteTypeModel> voteTypeModelList = null;
 
-            if(this.IsSuperManager)
+            if (this.IsSuperManager)
             {
                 voteTypeModelList = DALFactory.VoteType.List();
             }
@@ -64,8 +71,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
 
             ViewBag.VoteTypeJsonText = this.GetVoteTypeJsonText(channelModelList, voteTypeModelList);
-            ViewBag.VoteTypeList = voteTypeModelList;
-
+            if (this.IsSuperManager)
+            {
+                ViewBag.VoteTypeList = voteTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
+            else
+            {
+                ViewBag.VoteTypeList = voteTypeModelList;
+            }
             ViewBag.VoteItemJsonText = identityID > 0 ? this.GetVoteItemJsonText(identityID) : "{}";
 
             return View("Edit", model);

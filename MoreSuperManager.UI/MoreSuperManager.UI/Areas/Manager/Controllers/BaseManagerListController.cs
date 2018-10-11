@@ -45,14 +45,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
         }
 
-        protected virtual void InitChannelViewData<T>(T t, Action<string, List<DBChannelModel>> callback, Func<List<DBChannelModel>> channelFunc) where T : IChannelModel
+        protected virtual void InitChannelViewData<T>(T t, Action<string, List<DBChannelModel>> callback, Func<List<DBChannelModel>> func) where T : IChannelModel
         {
             string channelCode = this.viewUserModel.ChannelCode;
 
             List<DBChannelModel> channelModelList = null;
             if (this.IsSuperManager)
             {
-                channelModelList = channelFunc != null ? channelFunc() : null;
+                channelModelList = func != null ? func() : null;
                 if (channelModelList != null && channelModelList.Count > 0) channelCode = channelModelList[0].ChannelCode;
             }
             if (t != null) channelCode = t.ChannelCode;
@@ -74,7 +74,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 TotalCount = this.totalCount,
                 PageUrl = pageUrl
             });
-            if (string.IsNullOrEmpty(this.viewUserModel.ChannelCode) || this.viewUserModel.ChannelCode == "-1" && channelModelList != null && channelModelList.Count > 0)
+            if (this.IsSuperManager && channelModelList != null && channelModelList.Count > 0)
             {
                 ViewBag.ChannelList = channelModelList;
             }

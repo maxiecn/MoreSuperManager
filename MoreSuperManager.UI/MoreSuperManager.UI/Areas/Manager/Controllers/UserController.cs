@@ -35,11 +35,11 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             if (this.IsSuperManager)
             {
-                ViewBag.RoleList = DALFactory.Role.List();
+                ViewBag.RoleList = this.InitRoleKeyValueList(DALFactory.Role.List(), ConstHelper.GetChannelList(DALFactory.Channel.ChannelList()), this.viewUserModel.ChannelCode);
             }
             else
             {
-                ViewBag.RoleList = DALFactory.Role.ChannelList(this.viewUserModel.ChannelCode);
+                ViewBag.RoleList = this.InitRoleKeyValueList(DALFactory.Role.ChannelList(this.viewUserModel.ChannelCode), null, this.viewUserModel.ChannelCode);
             }
             return View("Edit", DALFactory.User.Select(identityID));
         }
@@ -146,6 +146,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             {
                 return DALFactory.User.Operater(model);
             }, Url.Action("List"), model.IdentityID == 0 ? Url.Action("Add") : "", Url.Action("Edit", new { identityID = model.IdentityID }), "用户名已存在！");
+        }
+        private List<DBKeyValueModel> InitRoleKeyValueList(List<DBRoleModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
+        {
+            return ConstHelper.GetChannelKeyValueList<DBRoleModel>(channelModelList, modelList, channelCode, (DBRoleModel model) =>
+            {
+                return model.IdentityID;
+            }, (DBRoleModel model) =>
+            {
+                return model.RoleName;
+            });
         }
     }
 }

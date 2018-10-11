@@ -23,8 +23,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, LinkFriendType = linkFriendType }), channelModelList, channelCode);
             
             ViewData["LinkFriendType"] = linkFriendType;
-            ViewBag.LinkFriendTypeList = this.InitLinkFriendTypeKeyValueList(DALFactory.LinkFriendType.List(), channelModelList, this.viewUserModel.ChannelCode);
-            
+            if (this.IsSuperManager)
+            {
+                ViewBag.LinkFriendTypeList = this.InitLinkFriendTypeKeyValueList(DALFactory.LinkFriendType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            }
+            else
+            {
+                ViewBag.LinkFriendTypeList = this.InitLinkFriendTypeKeyValueList(DALFactory.LinkFriendType.ChannelList(this.viewUserModel.ChannelCode), channelModelList, this.viewUserModel.ChannelCode);
+            }
             return View(modelList);
         }
 
@@ -62,8 +68,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
 
             ViewBag.LinkFriendTypeJsonText = this.GetLinkFriendTypeJsonText(channelModelList, linkFriendTypeModelList);
-            ViewBag.LinkFriendTypeList = linkFriendTypeModelList;
-
+            if (this.IsSuperManager)
+            {
+                ViewBag.LinkFriendTypeList = linkFriendTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
+            else
+            {
+                ViewBag.LinkFriendTypeList = linkFriendTypeModelList;
+            }
             return View("Edit", model);
         }
 

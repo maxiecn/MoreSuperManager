@@ -22,7 +22,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, NoticeType = noticeType }), channelModelList, channelCode);
 
-            ViewBag.NoticeTypeList = this.InitNoticeTypeKeyValueList(DALFactory.NoticeType.List(), channelModelList, channelCode);
+            if (this.IsSuperManager)
+            {
+                ViewBag.NoticeTypeList = this.InitNoticeTypeKeyValueList(DALFactory.NoticeType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            }
+            else
+            {
+                ViewBag.NoticeTypeList = this.InitNoticeTypeKeyValueList(DALFactory.NoticeType.ChannelList(this.viewUserModel.ChannelCode), channelModelList, this.viewUserModel.ChannelCode);
+            }
             ViewData["NoticeType"] = noticeType;
 
             return View(modelList);
@@ -52,7 +59,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             });
 
             List<DBNoticeTypeModel> noticeTypeModelList = null;
-            if(this.IsSuperManager)
+            if (this.IsSuperManager)
             {
                 noticeTypeModelList = DALFactory.NoticeType.List();
             }
@@ -62,8 +69,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
 
             ViewBag.NoticeTypeJsonText = this.GetNoticeTypeJsonText(channelModelList, noticeTypeModelList);
-            ViewBag.NoticeTypeList = noticeTypeModelList;
-
+            if (this.IsSuperManager)
+            {
+                ViewBag.NoticeTypeList = noticeTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
+            else
+            {
+                ViewBag.NoticeTypeList = noticeTypeModelList;
+            }
             return View("Edit", model);
         }
 

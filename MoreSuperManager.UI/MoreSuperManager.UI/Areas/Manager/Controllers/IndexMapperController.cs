@@ -50,9 +50,9 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            Dictionary<int, List<DBKeyValueCodeModel>> indexTypeMapperKeyValueDict = this.GetIndexTypeMapperKeyValueDict(this.viewUserModel.ChannelCode);
+            Dictionary<int, List<DBKeyValueCodeModel>> indexTypeMapperKeyValueDict = this.GetIndexTypeMapperKeyValueDict(channelCode);
             ViewBag.IndexTypeList = ConstHelper.GetIndexMapperList();
-            if(model != null)
+            if (model != null)
             {
                 ViewBag.IndexIDList = ConstHelper.GetIndexMapperKeyValueList(model.IndexType);
                 if (indexTypeMapperKeyValueDict.ContainsKey(model.IndexType))
@@ -70,8 +70,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             }
 
             ViewBag.IndexJsonText = this.GetIndexJsonText();
-            ViewBag.MapperJsonText = this.GetMapperJsonText(this.GetIndexTypeMapperKeyValueDict(this.viewUserModel.ChannelCode), channelModelList);
-
+            if (this.IsSuperManager)
+            {
+                ViewBag.MapperJsonText = this.GetMapperJsonText(this.GetIndexTypeMapperKeyValueDict(channelCode), channelModelList);
+            }
+            else
+            {
+                ViewBag.MapperJsonText = this.GetMapperJsonText(this.GetIndexTypeMapperKeyValueDict(channelCode), new List<DBChannelModel>() { new DBChannelModel() { ChannelCode = channelCode } });
+            }
             ViewBag.ChannelCode = this.viewUserModel.ChannelCode;
             return View("Edit", model);
         }
@@ -131,14 +137,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         }
         private string GetMapperJsonText(Dictionary<int, List<DBKeyValueCodeModel>> keyValueDict, List<DBChannelModel> channelModelList)
         {
+            if (channelModelList == null || channelModelList.Count == 0) return "{}";
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("{");
 
             int dictIndex = 0;
-            foreach(KeyValuePair<int, List<DBKeyValueCodeModel>> keyValueItem in keyValueDict)
+            foreach (KeyValuePair<int, List<DBKeyValueCodeModel>> keyValueItem in keyValueDict)
             {
                 int channelIndex = 0;
-                foreach(DBChannelModel channelMoelItem in channelModelList)
+                foreach (DBChannelModel channelMoelItem in channelModelList)
                 {
                     stringBuilder.Append("\\\"");
                     stringBuilder.Append(keyValueItem.Key);
@@ -147,17 +155,17 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                     stringBuilder.Append("\\\":[");
 
                     List<DBKeyValueCodeModel> dataList = keyValueItem.Value.Where(p => p.Code == channelMoelItem.ChannelCode).ToList();
-                    if(dataList != null && dataList.Count > 0)
+                    if (dataList != null && dataList.Count > 0)
                     {
                         int itemIndex = 0;
-                        foreach(DBKeyValueCodeModel dataItem in dataList)
+                        foreach (DBKeyValueCodeModel dataItem in dataList)
                         {
                             stringBuilder.Append("{\\\"key\\\":\\\"");
                             stringBuilder.Append(dataItem.Key);
                             stringBuilder.Append("\\\",\\\"value\\\":\\\"");
                             stringBuilder.Append(dataItem.Value);
                             stringBuilder.Append("\\\"}");
-                            if(itemIndex < dataList.Count - 1)
+                            if (itemIndex < dataList.Count - 1)
                             {
                                 stringBuilder.Append(",");
                             }
@@ -166,13 +174,13 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                     }
 
                     stringBuilder.Append("]");
-                    if(channelIndex < channelModelList.Count - 1)
+                    if (channelIndex < channelModelList.Count - 1)
                     {
                         stringBuilder.Append(",");
                     }
                     channelIndex++;
                 }
-                if(dictIndex < keyValueDict.Count - 1)
+                if (dictIndex < keyValueDict.Count - 1)
                 {
                     stringBuilder.Append(",");
                 }
@@ -188,21 +196,30 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             Dictionary<int, List<DBKeyValueCodeModel>> resultDict = new Dictionary<int, List<DBKeyValueCodeModel>>();
 
-            List<ViewTreeTopicTypeModel> topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList());
+            List<ViewTreeTopicTypeModel> topicTypeModelList = null;
+            List<DBLinkFriendTypeModel> linkTypeModelList = null;
+            if (this.IsSuperManager)
+            {
+                topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList());
+                linkTypeModelList = DALFactory.LinkFriendType.List();
+            }
+            else
+            {
+                topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.ChannelList(channelCode));
+                linkTypeModelList = DALFactory.LinkFriendType.ChannelList(channelCode);
+            }
             if (topicTypeModelList != null && topicTypeModelList.Count > 0)
             {
                 resultDict.Add(IndexMapperTypeEnum.TOPIC, new List<DBKeyValueCodeModel>());
-                foreach(ViewTreeTopicTypeModel modelItem in topicTypeModelList)
+                foreach (ViewTreeTopicTypeModel modelItem in topicTypeModelList)
                 {
                     resultDict[IndexMapperTypeEnum.TOPIC].Add(new DBKeyValueCodeModel() { Key = modelItem.IdentityID.ToString(), Value = modelItem.LayerName, Code = modelItem.ChannelCode });
                 }
             }
-
-            List<DBLinkFriendTypeModel> linkTypeModelList = DALFactory.LinkFriendType.List();
-            if(linkTypeModelList != null && linkTypeModelList.Count > 0)
+            if (linkTypeModelList != null && linkTypeModelList.Count > 0)
             {
                 resultDict.Add(IndexMapperTypeEnum.LINKFRIEND, new List<DBKeyValueCodeModel>());
-                foreach(DBLinkFriendTypeModel modelItem in linkTypeModelList)
+                foreach (DBLinkFriendTypeModel modelItem in linkTypeModelList)
                 {
                     resultDict[IndexMapperTypeEnum.LINKFRIEND].Add(new DBKeyValueCodeModel() { Key = modelItem.IdentityID.ToString(), Value = modelItem.TypeName, Code = modelItem.ChannelCode });
                 }

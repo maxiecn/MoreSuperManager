@@ -1,4 +1,5 @@
-﻿@model MoreSuperManager.MODEL.DBUserModel
+﻿@using MoreSuperManager.MODEL
+@model MoreSuperManager.MODEL.DBUserModel
 @{
     ViewBag.Title = "Edit";
     Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
@@ -34,9 +35,9 @@
                 <select class="form-control" style="width:200px;" name="roleID">
                     @if (ViewBag.RoleList != null && ViewBag.RoleList.Count > 0)
                     {
-                        foreach (MoreSuperManager.MODEL.DBRoleModel modelItem in ViewBag.RoleList)
+                        foreach (DBKeyValueModel modelItem in ViewBag.RoleList)
                         {
-                            <option value="@modelItem.IdentityID" @(Html.Raw(Model != null && Model.RoleID == modelItem.IdentityID ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.RoleName))</option>
+                            <option value="@modelItem.Key" @(Html.Raw(Model != null && Model.RoleID.ToString() == modelItem.Key ? "selected=\"selected\"" : ""))>@Html.Raw(Server.HtmlEncode(modelItem.Value))</option>
                         }
                     }
                 </select>

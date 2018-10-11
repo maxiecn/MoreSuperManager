@@ -20,7 +20,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
             List<ViewTreeMenuModel> dataList = TreeHelper.ToMenuList<ViewTreeMenuModel>(DALFactory.Menu.All(this.GetChannelCode(channelCode), searchKey));
-            this.InitViewData(searchKey, 0, "", this.IsSuperManager ? ConstHelper.ChannelList(DALFactory.Channel.ChannelList()) : null, channelCode);
+            this.InitViewData(searchKey, 0, "", this.IsSuperManager ? ConstHelper.GetChannelList(DALFactory.Channel.ChannelList()) : null, channelCode);
 
             ViewBag.ActionTypeList = DALFactory.ActionType.List();
             ViewBag.ModuleList = DALFactory.Module.List();
@@ -87,7 +87,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                     ViewBag.ActionTypeList = DALFactory.ActionType.List(moduleModel.ActionList);
                 }
             }
-            if (string.IsNullOrEmpty(channelCode) || channelCode == "-1")
+            if (this.IsSuperManager)
             {
                 ViewBag.FlowStepList = flowStepModelList;
             }

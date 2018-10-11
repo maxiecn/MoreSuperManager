@@ -14,12 +14,12 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
     public class ModuleController : BaseManagerListController
     {
         [RoleMenuFilter]
-        public ActionResult List(string channelCode = "", string searchKey = "", int pageIndex = 1)
+        public ActionResult List(string channelCode = "-2", string searchKey = "", int pageIndex = 1)
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
             List<DBModuleFullModel> modelList = DALFactory.Module.Page(this.GetChannelCode(channelCode), searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), this.IsSuperManager ? ConstHelper.ChannelList(DALFactory.Channel.ChannelList()) : null, channelCode);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), this.IsSuperManager ? ConstHelper.GetChannelList(DALFactory.Channel.ChannelList()) : null, channelCode);
 
             return View(modelList);
         }
@@ -35,7 +35,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             if (this.IsSuperManager)
             {
-                ViewBag.ChannelList = ConstHelper.ChannelList(DALFactory.Channel.List());
+                ViewBag.ChannelList = ConstHelper.GetChannelList(DALFactory.Channel.List());
             }
 
             ViewBag.ActionTypeList = DALFactory.ActionType.List();

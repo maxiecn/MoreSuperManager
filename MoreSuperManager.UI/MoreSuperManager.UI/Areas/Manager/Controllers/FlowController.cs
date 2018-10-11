@@ -27,8 +27,14 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, FlowType = flowType }), channelModelList, channelCode);
             
             ViewData["FlowType"] = flowType;
-            ViewBag.FlowTypeList = this.InitFlowTypeKeyValueList(DALFactory.FlowType.List(), channelModelList, this.viewUserModel.ChannelCode);
-            
+            if (this.IsSuperManager)
+            {
+                ViewBag.FlowTypeList = this.InitFlowTypeKeyValueList(DALFactory.FlowType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            }
+            else
+            {
+                ViewBag.FlowTypeList = this.InitFlowTypeKeyValueList(DALFactory.FlowType.ChannelList(this.viewUserModel.ChannelCode), channelModelList, this.viewUserModel.ChannelCode);
+            }
             return View(modelList);
         }
 
@@ -102,12 +108,18 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             ViewBag.RoleJsonText = this.GetRoleJsonText(channelModelList, roleModelList);
             ViewBag.FlowSymbolTypeJsonText = this.GetFlowSymbolTypeJsonText(channelModelList, flowSymbolTypeModelList);
 
-            // 角色列表
-            ViewBag.RoleList = roleModelList;
-            // 可选符号列表
-            ViewBag.SymbolTypeList = flowSymbolTypeModelList;
-            // 流程类别列表
-            ViewBag.FlowTypeList = flowTypeModelList;
+            if (this.IsSuperManager)
+            {
+                ViewBag.RoleList = roleModelList.Where(p => p.ChannelCode == channelCode).ToList();
+                ViewBag.SymbolTypeList = flowSymbolTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+                ViewBag.FlowTypeList = flowTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            }
+            else
+            {
+                ViewBag.RoleList = roleModelList;
+                ViewBag.SymbolTypeList = flowSymbolTypeModelList;
+                ViewBag.FlowTypeList = flowTypeModelList;
+            }
             // 流程步骤数据
             ViewBag.FlowStepJsonText = this.GetFlowStepJsonText(identityID);
 
