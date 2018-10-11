@@ -19,7 +19,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             List<DBIndexMapperFullModel> modelList = DALFactory.IndexMapper.Page(this.GetChannelCode(channelCode), indexType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData("", pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, IndexType = indexType }), DALFactory.Channel.ChannelList(), channelCode);
+            this.InitViewData("", pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, IndexType = indexType }), this.IsSuperManager ? DALFactory.Channel.ChannelList() : null, channelCode);
 
             ViewBag.IndexTypeList = ConstHelper.GetIndexMapperList();
             ViewData["IndexType"] = indexType;

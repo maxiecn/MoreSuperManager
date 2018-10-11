@@ -44,6 +44,10 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBVoteTypeModel>(null, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
+        public List<DBVoteTypeModel> ChannelList(string channelCode)
+        {
+            return DataBaseHelper.More<DBVoteTypeModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, p=>p.ChannelCode == p.ChannelCode, p => p.TypeSort, true, TABLE_NAME);
+        }
 
         public List<DBVoteTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {

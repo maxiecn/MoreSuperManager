@@ -19,7 +19,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
             List<DBTopicFullModel> modelList = DALFactory.Topic.Page(channelCode, searchKey, topicType, topicPositionType, topicStatus, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, TopicType = topicType, TopicPosition = topicPositionType, TopicStatus = topicStatus }), channelModelList, channelCode);
 
@@ -60,14 +60,25 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            List<DBTopicPositionTypeModel> topicPositionTypeModelList = DALFactory.TopicPositionType.List();
-            List<ViewTreeTopicTypeModel> topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList());
+            List<DBTopicPositionTypeModel> topicPositionTypeModelList = null;
+            List<ViewTreeTopicTypeModel> topicTypeModelList = null;
+
+            if(this.IsSuperManager)
+            {
+                topicPositionTypeModelList = DALFactory.TopicPositionType.List();
+                topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.TreeList());
+            }
+            else
+            {
+                topicPositionTypeModelList = DALFactory.TopicPositionType.ChannelList(channelCode);
+                topicTypeModelList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.ChannelList(channelCode));
+            }
 
             ViewBag.TopicTypeJsonText = this.GetTopicTypeJsonText(channelModelList, topicTypeModelList);
             ViewBag.TopicPositionTypeJsonText = this.GetTopicPositionTypeJsonText(channelModelList, topicPositionTypeModelList);
 
-            ViewBag.TopicTypeList = topicTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
-            ViewBag.PositionTypeList = topicPositionTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.TopicTypeList = topicTypeModelList;
+            ViewBag.PositionTypeList = topicPositionTypeModelList;
 
             return View("Edit", model);
         }

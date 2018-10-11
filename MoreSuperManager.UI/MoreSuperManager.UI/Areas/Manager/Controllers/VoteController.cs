@@ -21,7 +21,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
             List<DBVoteFullModel> modelList = DALFactory.Vote.Page(this.GetChannelCode(channelCode), searchKey, voteType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, VoteType = voteType }), channelModelList, channelCode);
             ViewData["VoteType"] = voteType;
@@ -52,10 +52,19 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            List<DBVoteTypeModel> voteTypeModelList = DALFactory.VoteType.List();
+            List<DBVoteTypeModel> voteTypeModelList = null;
 
-            ViewBag.VoteTypeList = voteTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            if(this.IsSuperManager)
+            {
+                voteTypeModelList = DALFactory.VoteType.List();
+            }
+            else
+            {
+                voteTypeModelList = DALFactory.VoteType.ChannelList(channelCode);
+            }
+
             ViewBag.VoteTypeJsonText = this.GetVoteTypeJsonText(channelModelList, voteTypeModelList);
+            ViewBag.VoteTypeList = voteTypeModelList;
 
             ViewBag.VoteItemJsonText = identityID > 0 ? this.GetVoteItemJsonText(identityID) : "{}";
 

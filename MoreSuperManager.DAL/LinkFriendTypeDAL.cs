@@ -44,6 +44,10 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBLinkFriendTypeModel>(null, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
+        public List<DBLinkFriendTypeModel> ChannelList(string channelCode)
+        {
+            return DataBaseHelper.More<DBLinkFriendTypeModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, p=>p.ChannelCode == channelCode, p => p.TypeSort, true, TABLE_NAME);
+        }
 
         public List<DBLinkFriendTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {

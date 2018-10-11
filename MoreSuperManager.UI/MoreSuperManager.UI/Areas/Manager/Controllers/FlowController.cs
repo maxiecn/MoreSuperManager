@@ -22,12 +22,13 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
             List<DBFlowFullModel> modelList = DALFactory.Flow.Page(this.GetChannelCode(channelCode), searchKey, flowType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, FlowType = flowType }), channelModelList, channelCode);
             
             ViewData["FlowType"] = flowType;
             ViewBag.FlowTypeList = this.InitFlowTypeKeyValueList(DALFactory.FlowType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            
             return View(modelList);
         }
 
@@ -80,21 +81,36 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            List<DBFlowTypeModel> flowTypeModelList = DALFactory.FlowType.List();
-            List<DBRoleModel> roleModelList = DALFactory.Role.List();
-            List<DBFlowSymbolTypeModel> flowSymbolTypeModelList = DALFactory.FlowSymbolType.List();
+            List<DBFlowTypeModel> flowTypeModelList = null;
+            List<DBRoleModel> roleModelList = null;
+            List<DBFlowSymbolTypeModel> flowSymbolTypeModelList = null;
+
+            if (this.IsSuperManager)
+            {
+                flowTypeModelList = DALFactory.FlowType.List();
+                roleModelList = DALFactory.Role.List();
+                flowSymbolTypeModelList = DALFactory.FlowSymbolType.List();
+            }
+            else
+            {
+                flowTypeModelList = DALFactory.FlowType.ChannelList(channelCode);
+                roleModelList = DALFactory.Role.ChannelList(channelCode);
+                flowSymbolTypeModelList = DALFactory.FlowSymbolType.ChannelList(channelCode);
+            }
 
             ViewBag.FlowTypeJsonText = this.GetFlowTypeJsonText(channelModelList, flowTypeModelList);
             ViewBag.RoleJsonText = this.GetRoleJsonText(channelModelList, roleModelList);
             ViewBag.FlowSymbolTypeJsonText = this.GetFlowSymbolTypeJsonText(channelModelList, flowSymbolTypeModelList);
+
             // 角色列表
-            ViewBag.RoleList = roleModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.RoleList = roleModelList;
             // 可选符号列表
-            ViewBag.SymbolTypeList = flowSymbolTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.SymbolTypeList = flowSymbolTypeModelList;
             // 流程类别列表
-            ViewBag.FlowTypeList = flowTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.FlowTypeList = flowTypeModelList;
             // 流程步骤数据
             ViewBag.FlowStepJsonText = this.GetFlowStepJsonText(identityID);
+
             return View("FlowDesignEdit", model);
         }
 
@@ -225,6 +241,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             return string.Format(format, modelList.Count, stringBuilder.ToString());
         }
 
+        [NonAction]
         private List<DBKeyValueModel> InitFlowTypeKeyValueList(List<DBFlowTypeModel> modelList, List<DBChannelModel> channelModelList, string channelCode)
         {
             return ConstHelper.GetChannelKeyValueList<DBFlowTypeModel>(channelModelList, modelList, channelCode, (DBFlowTypeModel model) =>
@@ -235,6 +252,8 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return model.TypeName;
             });
         }
+        
+        [NonAction]
         private string GetFlowTypeJsonText(List<DBChannelModel> channelModelList, List<DBFlowTypeModel> modelList)
         {
             return ConstHelper.GetJsonText<DBFlowTypeModel>(channelModelList, modelList, (DBFlowTypeModel model) =>
@@ -245,6 +264,8 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return model.TypeName;
             });
         }
+        
+        [NonAction]
         private string GetRoleJsonText(List<DBChannelModel> channelModelList, List<DBRoleModel> modelList)
         {
             return ConstHelper.GetJsonText<DBRoleModel>(channelModelList, modelList, (DBRoleModel model) =>
@@ -255,6 +276,8 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return model.RoleName;
             });
         }
+        
+        [NonAction]
         private string GetFlowSymbolTypeJsonText(List<DBChannelModel> channelModelList, List<DBFlowSymbolTypeModel> modelList)
         {
             return ConstHelper.GetJsonText<DBFlowSymbolTypeModel>(channelModelList, modelList, (DBFlowSymbolTypeModel model) =>

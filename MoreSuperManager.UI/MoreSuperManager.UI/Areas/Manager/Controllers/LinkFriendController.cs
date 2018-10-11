@@ -18,12 +18,13 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             searchKey = this.FilterSpecChar(searchKey);
 
             List<DBLinkFriendFullModel> modelList = DALFactory.LinkFriend.Page(this.GetChannelCode(channelCode), searchKey, linkFriendType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, LinkFriendType = linkFriendType }), channelModelList, channelCode);
             
             ViewData["LinkFriendType"] = linkFriendType;
             ViewBag.LinkFriendTypeList = this.InitLinkFriendTypeKeyValueList(DALFactory.LinkFriendType.List(), channelModelList, this.viewUserModel.ChannelCode);
+            
             return View(modelList);
         }
 
@@ -50,10 +51,18 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            List<DBLinkFriendTypeModel> linkFriendTypeModelList = DALFactory.LinkFriendType.List();
+            List<DBLinkFriendTypeModel> linkFriendTypeModelList = null;
+            if (this.IsSuperManager)
+            {
+                linkFriendTypeModelList = DALFactory.LinkFriendType.List();
+            }
+            else
+            {
+                linkFriendTypeModelList = DALFactory.LinkFriendType.ChannelList(channelCode);
+            }
 
             ViewBag.LinkFriendTypeJsonText = this.GetLinkFriendTypeJsonText(channelModelList, linkFriendTypeModelList);
-            ViewBag.LinkFriendTypeList = linkFriendTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.LinkFriendTypeList = linkFriendTypeModelList;
 
             return View("Edit", model);
         }

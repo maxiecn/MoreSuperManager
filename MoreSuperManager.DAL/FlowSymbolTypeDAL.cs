@@ -44,6 +44,10 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBFlowSymbolTypeModel>(null, p => new { p.IdentityID, p.TypeCode, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
+        public List<DBFlowSymbolTypeModel> ChannelList(string channelCode)
+        {
+            return DataBaseHelper.More<DBFlowSymbolTypeModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.TypeCode, p.TypeName, p.ChannelCode }, p=>p.ChannelCode == channelCode, p => p.TypeSort, true, TABLE_NAME);
+        }
 
         public List<DBFlowSymbolTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {

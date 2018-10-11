@@ -44,6 +44,10 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBNoticeTypeModel>(null, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, null, p => p.TypeSort, true, TABLE_NAME);
         }
+        public List<DBNoticeTypeModel> ChannelList(string channelCode)
+        {
+            return DataBaseHelper.More<DBNoticeTypeModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.TypeName, p.ChannelCode }, p=>p.ChannelCode == channelCode, p => p.TypeSort, true, TABLE_NAME);
+        }
 
         public List<DBNoticeTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {

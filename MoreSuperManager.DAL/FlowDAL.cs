@@ -84,6 +84,10 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBFlowModel>(null, p => new { p.IdentityID, p.FlowName, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
+        public List<DBFlowModel> ChannelList(string channelCode)
+        {
+            return DataBaseHelper.More<DBFlowModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.FlowName, p.ChannelCode }, p=>p.ChannelCode == p.ChannelCode, null, true, TABLE_NAME);
+        }
 
         public List<DBFlowFullModel> Page(string channelCode, string searchKey, int flowType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {

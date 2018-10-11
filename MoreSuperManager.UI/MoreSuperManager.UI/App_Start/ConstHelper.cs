@@ -75,6 +75,8 @@ namespace MoreSuperManager.UI
 
         public static string GetJsonText<T>(List<DBChannelModel> channelModelList, List<T> dataList, Func<T, object> keyFunc, Func<T, string> valueFunc, Func<T, string> codeFunc = null, bool containsManager = false, Func<T, bool> exceptFunc = null, DBKeyValueModel rootItem = null, bool containsManagerData = false) where T : IChannelModel
         {
+            if (channelModelList == null || channelModelList.Count == 0 || dataList == null || dataList.Count == 0) return "{}";
+
             List<string> channelCodeList = channelModelList.Select(p => p.ChannelCode).ToList();
             if (containsManager) channelCodeList.Insert(0, ChannelCodeTypeEnum.ALL);
 
@@ -194,16 +196,38 @@ namespace MoreSuperManager.UI
             List<DBKeyValueModel> resultList = new List<DBKeyValueModel>();
 
             Dictionary<string, string> channelDict = new Dictionary<string, string>();
-            foreach (DBChannelModel modelItem in channelModelList)
+            if (channelModelList != null && channelModelList.Count > 0)
             {
-                channelDict.Add(modelItem.ChannelCode, modelItem.ChannelName);
-            }
-            if (modelList != null && modelList.Count > 0)
-            {
-                List<string> channelCodeItemList = modelList.Select(p => p.ChannelCode).Distinct().ToList();
-                foreach (string channelCodeItem in channelCodeItemList)
+                foreach (DBChannelModel modelItem in channelModelList)
                 {
-                    List<T> dataList = modelList.Where(p => p.ChannelCode == channelCodeItem).ToList();
+                    channelDict.Add(modelItem.ChannelCode, modelItem.ChannelName);
+                }
+                if (modelList != null && modelList.Count > 0)
+                {
+                    List<string> channelCodeItemList = modelList.Select(p => p.ChannelCode).Distinct().ToList();
+                    foreach (string channelCodeItem in channelCodeItemList)
+                    {
+                        List<T> dataList = modelList.Where(p => p.ChannelCode == channelCodeItem).ToList();
+                        if (dataList != null && dataList.Count > 0)
+                        {
+                            foreach (T t in dataList)
+                            {
+                                string valueText = valueFunc != null ? valueFunc(t) : "";
+                                resultList.Add(new DBKeyValueModel()
+                                {
+                                    Key = keyFunc != null ? keyFunc(t).ToString() : "",
+                                    Value = ((string.IsNullOrEmpty(channelCode) || channelCode == "-1") && channelDict.ContainsKey(t.ChannelCode)) ? string.Format("{0}/{1}", channelDict[t.ChannelCode], valueText) : valueText
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if(modelList != null && modelList.Count > 0)
+                {
+                    List<T> dataList = modelList.Where(p => p.ChannelCode == channelCode).ToList();
                     if (dataList != null && dataList.Count > 0)
                     {
                         foreach (T t in dataList)

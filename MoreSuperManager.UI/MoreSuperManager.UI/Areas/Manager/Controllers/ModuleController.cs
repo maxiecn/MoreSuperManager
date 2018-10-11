@@ -19,7 +19,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             searchKey = StringHelper.FilterSpecChar(searchKey);
             List<DBModuleFullModel> modelList = DALFactory.Module.Page(this.GetChannelCode(channelCode), searchKey, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
 
-            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), ConstHelper.ChannelList(DALFactory.Channel.ChannelList()), channelCode);
+            this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey }), this.IsSuperManager ? ConstHelper.ChannelList(DALFactory.Channel.ChannelList()) : null, channelCode);
 
             return View(modelList);
         }

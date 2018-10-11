@@ -18,7 +18,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
             List<DBProjectFullModel> modelList = DALFactory.Project.Page(this.GetChannelCode(channelCode), searchKey, projectType, flowID, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, ProjectType = projectType, FlowID = flowID }), channelModelList, channelCode);
             ViewData["ProjectType"] = projectType;
@@ -51,14 +51,25 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            List<DBProjectTypeModel> projectTypeModelList = DALFactory.ProjectType.List();
-            List<DBFlowModel> flowModelList = DALFactory.Flow.List();
+            List<DBProjectTypeModel> projectTypeModelList = null;
+            List<DBFlowModel> flowModelList = null;
+
+            if(this.IsSuperManager)
+            {
+                projectTypeModelList = DALFactory.ProjectType.List();
+                flowModelList = DALFactory.Flow.List();
+            }
+            else
+            {
+                projectTypeModelList = DALFactory.ProjectType.ChannelList(channelCode);
+                flowModelList = DALFactory.Flow.ChannelList(channelCode);
+            }
 
             ViewBag.ProjectTypeJsonText = this.GetProjectTypeJsonText(channelModelList, projectTypeModelList);
             ViewBag.FlowJsonText = this.GetFlowJsonText(channelModelList, flowModelList);
 
-            ViewBag.ProjectTypeList = projectTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
-            ViewBag.FlowList = flowModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.ProjectTypeList = projectTypeModelList;
+            ViewBag.FlowList = flowModelList;
 
             return View("Edit", model);
         }

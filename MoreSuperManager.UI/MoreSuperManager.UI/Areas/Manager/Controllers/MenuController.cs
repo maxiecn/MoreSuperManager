@@ -20,7 +20,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
             List<ViewTreeMenuModel> dataList = TreeHelper.ToMenuList<ViewTreeMenuModel>(DALFactory.Menu.All(this.GetChannelCode(channelCode), searchKey));
-            this.InitViewData(searchKey, 0, "", ConstHelper.ChannelList(DALFactory.Channel.ChannelList()), channelCode);
+            this.InitViewData(searchKey, 0, "", this.IsSuperManager ? ConstHelper.ChannelList(DALFactory.Channel.ChannelList()) : null, channelCode);
 
             ViewBag.ActionTypeList = DALFactory.ActionType.List();
             ViewBag.ModuleList = DALFactory.Module.List();
@@ -43,9 +43,9 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             string channelCode = null;
             List<DBChannelModel> channelModelList = null;
 
-            List<ViewTreeMenuModel> menuModelList = TreeHelper.ToMenuList<ViewTreeMenuModel>(DALFactory.Menu.TreeList());
-            List<DBModuleModel> moduleModelList = DALFactory.Module.List();
-            List<DBFlowStepModel> flowStepModelList = DALFactory.FlowStep.List();
+            List<ViewTreeMenuModel> menuModelList = null;
+            List<DBModuleModel> moduleModelList = null;
+            List<DBFlowStepModel> flowStepModelList = null;
 
             this.InitChannelViewData<DBMenuModel>(model, (p, k) =>
             {
@@ -56,12 +56,24 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
+            if(this.IsSuperManager)
+            {
+                menuModelList = TreeHelper.ToMenuList<ViewTreeMenuModel>(DALFactory.Menu.TreeList());
+                moduleModelList = DALFactory.Module.List();
+                flowStepModelList = DALFactory.FlowStep.List();
+
+                ViewBag.MenuJsonText = this.GetMenuJsonText(channelModelList, menuModelList, menuID);
+                ViewBag.ModuleJsonText = this.GetModuleJsonText(channelModelList, moduleModelList);
+            }
+            else
+            {
+                menuModelList = TreeHelper.ToMenuList<ViewTreeMenuModel>(DALFactory.Menu.ChannelList(channelCode));
+                moduleModelList = DALFactory.Module.ChannelList(channelCode);
+            }
+
             List<DBModuleModel> moduleList = moduleModelList.Where(p => p.ChannelCode == channelCode).ToList();
 
-            ViewBag.MenuJsonText = this.GetMenuJsonText(channelModelList, menuModelList, menuID);
             ViewBag.TreeMenuList = menuModelList.Where(p => p.ChannelCode == channelCode && p.IdentityID != menuID).ToList();
-
-            ViewBag.ModuleJsonText = this.GetModuleJsonText(channelModelList, moduleModelList);
             ViewBag.ModuleList = moduleList;
 
             ViewBag.ActionTypeJsonText = this.GetActionTypeJsonText();

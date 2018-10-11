@@ -18,12 +18,13 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
             List<DBNoticeFullModel> modelList = DALFactory.Notice.Page(this.GetChannelCode(channelCode), searchKey, noticeType, pageIndex, this.PageSize, ref this.totalCount, ref this.pageCount);
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
 
             this.InitViewData(searchKey, pageIndex, Url.Action("List", new { PageIndex = -999, ChannelCode = channelCode, SearchKey = searchKey, NoticeType = noticeType }), channelModelList, channelCode);
 
             ViewBag.NoticeTypeList = this.InitNoticeTypeKeyValueList(DALFactory.NoticeType.List(), channelModelList, channelCode);
             ViewData["NoticeType"] = noticeType;
+
             return View(modelList);
         }
 
@@ -50,10 +51,18 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 return DALFactory.Channel.ChannelList();
             });
 
-            List<DBNoticeTypeModel> noticeTypeModelList = DALFactory.NoticeType.List();
+            List<DBNoticeTypeModel> noticeTypeModelList = null;
+            if(this.IsSuperManager)
+            {
+                noticeTypeModelList = DALFactory.NoticeType.List();
+            }
+            else
+            {
+                noticeTypeModelList = DALFactory.NoticeType.ChannelList(channelCode);
+            }
 
             ViewBag.NoticeTypeJsonText = this.GetNoticeTypeJsonText(channelModelList, noticeTypeModelList);
-            ViewBag.NoticeTypeList = noticeTypeModelList.Where(p => p.ChannelCode == channelCode).ToList();
+            ViewBag.NoticeTypeList = noticeTypeModelList;
 
             return View("Edit", model);
         }

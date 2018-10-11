@@ -19,8 +19,8 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         {
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
-            List<DBChannelModel> channelModelList = DALFactory.Channel.ChannelList();
-            if (string.IsNullOrEmpty(channelCode)) channelCode = channelModelList[0].ChannelCode;
+            List<DBChannelModel> channelModelList = this.IsSuperManager ? DALFactory.Channel.ChannelList() : null;
+            if (string.IsNullOrEmpty(channelCode) && (channelModelList != null && channelModelList.Count > 0)) channelCode = channelModelList[0].ChannelCode;
 
             // 设置树形菜单数据
             List<ViewTreeTopicTypeModel> dataList = TreeHelper.ToMenuList<ViewTreeTopicTypeModel>(DALFactory.TopicType.All(this.GetChannelCode(channelCode), searchKey));
