@@ -48,7 +48,7 @@ namespace MoreSuperManager.UI
                     // 删除权限
                     actionName = ActionTypeEnum.DELETE;
                 }
-                else if (operaterType == OperaterTypeEnum.CHECKED)
+                else if (operaterType == OperaterTypeEnum.CHECKED || operaterType == OperaterTypeEnum.DEFAULT)
                 {
                     actionName = ActionTypeEnum.CHECK;
                 }

@@ -106,7 +106,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 {
                     note = SUCCESS_DELETE_NOTE;
                 }
-                else if (operaterType == OperaterTypeEnum.CHECKED)
+                else if (operaterType == OperaterTypeEnum.CHECKED || operaterType == OperaterTypeEnum.DEFAULT)
                 {
                     note = SUCCESS_NOTE;
                 }
@@ -117,7 +117,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 {
                     note = ERROR_DELETE_NOTE;
                 }
-                else if (operaterType == OperaterTypeEnum.CHECKED)
+                else if (operaterType == OperaterTypeEnum.CHECKED || operaterType == OperaterTypeEnum.DEFAULT)
                 {
                     note = ERROR_NOTE;
                 }
@@ -126,7 +126,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
         }
 
         [NonAction]
-        protected ActionResult UploadOperater(Func<bool> callback, string type, string fromType, string CKEditorFuncNum = null, string moduleName = "Topics")
+        protected ActionResult UploadOperater(Func<bool> callback, string type, string fromType, string CKEditorFuncNum = null, string moduleName = "Topics", Func<string, string, int, string, bool> insertFunc = null)
         {
             try
             {
@@ -219,15 +219,7 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
                 // 保存上传文件
                 upload.SaveAs(uploadFilePath);
 
-                // 记录到附件
-                bool operaterResult = DALFactory.Attachment.Operater(new MODEL.DBAttachmentModel()
-                {
-                    AttachmentType = type,
-                    AttachmentName = upload.FileName,
-                    AttachmentSize = upload.ContentLength,
-                    AttachmentPath = filePath
-                });
-
+                bool insertStatus = insertFunc != null ? insertFunc(type, upload.FileName, upload.ContentLength, filePath) : false;
                 if (fromType != UploadFromTypeEnum.FILE)
                 {
                     return Content("<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ", \"" + filePath + "\");</script>");

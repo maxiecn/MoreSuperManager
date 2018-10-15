@@ -96,7 +96,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             return this.UploadOperater(() =>
             {
                 return DataHelper.AuthAction(this.viewUserModel.RoleID.ToString(), "Notice", "Upload");
-            }, type, fromType, CKEditorFuncNum, "Notices");
+            }, type, fromType, CKEditorFuncNum, "Notices", (string attachmentType, string attachmentName, int attachmentSize, string attachmentPath) =>
+            {
+                return DALFactory.Attachment.Operater(new MODEL.DBAttachmentModel()
+                {
+                    AttachmentType = attachmentType,
+                    AttachmentName = attachmentName,
+                    AttachmentSize = attachmentSize,
+                    AttachmentPath = attachmentPath
+                });
+            });
         }
 
         [HttpPost]

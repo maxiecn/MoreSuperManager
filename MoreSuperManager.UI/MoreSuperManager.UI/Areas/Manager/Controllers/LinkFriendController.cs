@@ -86,7 +86,16 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             return this.UploadOperater(() =>
             {
                 return DataHelper.AuthAction(this.viewUserModel.RoleID.ToString(), "LinkFriend", "Upload");
-            }, type, fromType, CKEditorFuncNum, "LinkFriends");
+            }, type, fromType, CKEditorFuncNum, "LinkFriends", (string attachmentType, string attachmentName, int attachmentSize, string attachmentPath) =>
+            {
+                return DALFactory.Attachment.Operater(new MODEL.DBAttachmentModel()
+                {
+                    AttachmentType = attachmentType,
+                    AttachmentName = attachmentName,
+                    AttachmentSize = attachmentSize,
+                    AttachmentPath = attachmentPath
+                });
+            });
         }
 
         [RoleActionFilter]

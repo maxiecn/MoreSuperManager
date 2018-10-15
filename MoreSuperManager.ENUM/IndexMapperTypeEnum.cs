@@ -9,6 +9,9 @@ namespace MoreSuperManager.ENUM
     public class IndexMapperTypeEnum
     {
         public const int TOPIC = 1;
+        public const string TOPICNAME = "新闻";
+
         public const int LINKFRIEND = 2;
+        public const string LINKFRIENDNAME = "链接";
     }
 }

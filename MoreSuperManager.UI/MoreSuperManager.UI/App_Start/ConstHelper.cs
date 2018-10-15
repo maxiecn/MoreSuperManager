@@ -25,9 +25,9 @@ namespace MoreSuperManager.UI
 
         private static readonly Dictionary<string, string> OperaterKeyValueDict = new Dictionary<string, string>()
         {
-            { OperaterTypeEnum.DEFAULT, "取消审核"},
-            { OperaterTypeEnum.DELETE, "删除" },
-            { OperaterTypeEnum.CHECKED, "审核" }
+            { OperaterTypeEnum.DEFAULT, OperaterTypeEnum.DEFAULTNAME },
+            { OperaterTypeEnum.DELETE, OperaterTypeEnum.DELETENAME },
+            { OperaterTypeEnum.CHECKED, OperaterTypeEnum.CHECKEDNAME }
         };
 
         public static List<DBKeyValueModel> GetIndexMapperList()
@@ -50,8 +50,8 @@ namespace MoreSuperManager.UI
         }
         public static string GetIndexMapperName(int indexType)
         {
-            if (indexType == IndexMapperTypeEnum.TOPIC) return "新闻";
-            if (indexType == IndexMapperTypeEnum.LINKFRIEND) return "链接";
+            if (indexType == IndexMapperTypeEnum.TOPIC) return IndexMapperTypeEnum.TOPICNAME;
+            if (indexType == IndexMapperTypeEnum.LINKFRIEND) return IndexMapperTypeEnum.LINKFRIENDNAME;
             return "";
         }
         public static string GetIndexMapperName(int indexType, int indexID)
