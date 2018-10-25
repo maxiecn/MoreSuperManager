@@ -12,7 +12,8 @@
         <form action="@Url.Action("List")" class="form-horizontal" method="get">
             <div class="pull-left" style="padding:0px;">
                 <button type="button" id="toolbarAdd" style="margin-right:5px;" class="btn btn-info"><i class="glyphicon glyphicon-plus" style="font-size:12px;padding-right : 10px;"></i>添加</button>
-                <button type="button" id="toolbarDelete" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
+                <button type="button" id="toolbarDelete" style="margin-right:5px;" class="btn btn-danger"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>删除</button>
+                <a href="@Url.Action("RoleClone", "Setting")" class="btn btn-warning"><i class="glyphicon glyphicon-trash" style="font-size:12px;padding-right : 10px;"></i>角色克隆</a>
             </div>
             <div class="input-group pull-right" style="padding:0px;width:@((ViewBag.ChannelList != null && ViewBag.ChannelList.Count > 0) ? 500 : 400)px;">
                 <input type="text" id="searchKey" name="searchKey" value="@ViewData["SearchKey"]" class="form-control" placeholder="输入关键字进行搜索！" />

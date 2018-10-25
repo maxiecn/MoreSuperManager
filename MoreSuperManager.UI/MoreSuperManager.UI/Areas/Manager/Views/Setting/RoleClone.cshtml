@@ -1,0 +1,46 @@
+﻿@using MoreSuperManager.MODEL
+@model MoreSuperManager.MODEL.DBRoleModel
+@{
+    Layout = "~/Areas/Manager/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="operater">
+    <form action="@Url.Action("RoleCloneOperater")" class="form-horizontal" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">原始角色：</label>
+            <div class="col-xs-10 form-cell">
+                <select class="form-control" style="width:200px;" name="sourceRoleID">
+                    @if (ViewBag.SourceRoleList != null && ViewBag.SourceRoleList.Count > 0)
+                    {
+                        foreach (DBRoleModel modelItem in ViewBag.SourceRoleList)
+                        {
+                            <option value="@modelItem.IdentityID">@Html.Raw(Server.HtmlEncode(modelItem.RoleName))</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-2 control-label form-label">目标角色：</label>
+            <div class="col-xs-10 form-cell">
+                <select class="form-control" style="width:200px;" name="targetRoleID">
+                    @if (ViewBag.SourceRoleList != null && ViewBag.SourceRoleList.Count > 0)
+                    {
+                        foreach (DBRoleModel modelItem in ViewBag.SourceRoleList)
+                        {
+                            <option value="@modelItem.IdentityID">@Html.Raw(Server.HtmlEncode(modelItem.RoleName))</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <span style="padding-left:100px;">
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-saved" style="font-size:12px;padding-right : 10px;"></i>保存</button>
+            </span>
+        </div>
+    </form>
+</div>
+
+

@@ -23,7 +23,6 @@ namespace MoreSuperManager.DAL
                 return DataBaseHelper.Update<DBChannelModel>(model, p => p.IdentityID == p.IdentityID, p => p.IdentityID, TABLE_NAME);
             }
         }
-
         public bool Exists(string channelCode, int identityID)
         {
             return DataBaseHelper.Exists<DBChannelModel>(new { ChannelCode = channelCode }, p => p.IdentityID, p => p.ChannelCode == p.ChannelCode, identityID, TABLE_NAME);

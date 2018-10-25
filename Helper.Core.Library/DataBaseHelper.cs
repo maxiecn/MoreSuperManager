@@ -1536,15 +1536,13 @@ namespace Helper.Core.Library
                 object result = null;
                 using (con = CreateDbConnection(connectionString, dataBaseType))
                 {
-                    transaction = con.BeginTransaction();
-
-                    if (func != null)
-                    {
-                        result = func(con, transaction);
-                    }
-
                     try
                     {
+                        transaction = con.BeginTransaction();
+                        if (func != null)
+                        {
+                            result = func(con, transaction);
+                        }
                         transaction.Commit();
                     }
                     catch

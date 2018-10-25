@@ -39,6 +39,22 @@ namespace MoreSuperManager.DAL
             List<int> dataList = StringHelper.ToList<int>(identityIDList, ",");
             return DataBaseHelper.Delete<DBRoleModel>(null, p => dataList.Contains(p.IdentityID), TABLE_NAME);
         }
+        public bool Clone(int sourceRoleID, int targetRoleID)
+        {
+            DBRoleModel sourceRoeModel = DALFactory.Role.Select(sourceRoleID);
+            DBRoleModel targetRoleModel = DALFactory.Role.Select(targetRoleID);
+            if (sourceRoeModel == null || targetRoleModel == null) return false;
+
+            List<DBModuleModel> moduleModelList = DALFactory.Module.CloneList(sourceRoeModel.ChannelCode);
+            List<DBMenuModel> menuModelList = DALFactory.Menu.CloneList(sourceRoeModel.ChannelCode);
+
+            return (bool)DataBaseHelper.Transaction((con, transaction) =>
+            {
+                DataBaseHelper.TransactionEntityListBatchImport<DBModuleModel>(con, transaction, "T_Module", moduleModelList);
+                DataBaseHelper.TransactionEntityListBatchImport<DBMenuModel>(con, transaction, "T_Menu", menuModelList);
+                return DataBaseHelper.Update<DBRoleModel>(new { MenuList = sourceRoeModel.MenuList, ActionList = sourceRoeModel.ActionList, IdentityID = targetRoleModel.IdentityID }, p => p.IdentityID == p.IdentityID, p => new { p.ChannelCode, p.RoleName }, TABLE_NAME);
+            });
+        }
         public DBRoleModel Select(int identityID)
         {
             return DataBaseHelper.Single<DBRoleModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.RoleName, p.MenuList, p.ActionList, p.ChannelCode }, p => p.IdentityID == p.IdentityID, TABLE_NAME);

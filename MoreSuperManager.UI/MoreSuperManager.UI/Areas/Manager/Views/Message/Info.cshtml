@@ -79,9 +79,9 @@
     <script type="text/javascript" src="~/JavaScripts/ckeditor/ckeditor.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript" src="~/JavaScripts/module/Message/info.js?v=@SettingHelper.Version"></script>
     <script type="text/javascript">
-    var uploadFilePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.File, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
-    var uploadImagePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.Image, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
-    var uploadVideoPath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.Video, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    var uploadFilePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.FILE, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    var uploadImagePath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.IMAGE, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
+    var uploadVideoPath = "@Html.Raw(Url.Action("UploadOperater", new { type = MoreSuperManager.ENUM.UploadTypeEnum.VIDEO, fromType = MoreSuperManager.ENUM.UploadFromTypeEnum.PLUGINS }))";
     </script>
 }
 

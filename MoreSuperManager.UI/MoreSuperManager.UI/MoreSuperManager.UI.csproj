@@ -993,6 +993,7 @@
     <Content Include="Areas\Manager\Views\Vote\List.cshtml" />
     <Content Include="Areas\Manager\Views\Shared\_ListNoData.cshtml" />
     <Content Include="Areas\Manager\Views\Shared\_ListOperaterData.cshtml" />
+    <Content Include="Areas\Manager\Views\Setting\RoleClone.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

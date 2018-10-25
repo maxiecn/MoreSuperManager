@@ -52,9 +52,12 @@ namespace MoreSuperManager.DAL
         }
         public List<DBModuleModel> ChannelList(string channelCode)
         {
-            return DataBaseHelper.More<DBModuleModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.ModuleCode, p.ModuleName, p.ActionList }, p => p.ChannelCode == p.ChannelCode, null, true, TABLE_NAME);
+            return DataBaseHelper.More<DBModuleModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.ModuleCode, p.ChannelCode, p.ModuleName, p.ActionList }, p => p.ChannelCode == p.ChannelCode, null, true, TABLE_NAME);
         }
-
+        public List<DBModuleModel> CloneList(string channelCode)
+        {
+            return DataBaseHelper.More<DBModuleModel>(new { ChannelCode = channelCode }, p => new { p.ModuleCode, p.ChannelCode, p.ModuleName, p.ActionList }, p => p.ChannelCode == p.ChannelCode, null, true, TABLE_NAME);
+        }
         public List<DBModuleFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
             StringBuilder stringBuilder = new StringBuilder();

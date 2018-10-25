@@ -1,4 +1,5 @@
-﻿using MoreSuperManager.ENUM;
+﻿using MoreSuperManager.DAL;
+using MoreSuperManager.ENUM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,13 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             {
                 return TaskHelper.ExecuteBakDataBase();
             }, Url.Action("Set"), Url.Action("Set"), null, "备份成功！", "备份失败！");
+        }
+
+        [RoleActionFilter]
+        public ActionResult RoleClone()
+        {
+            ViewBag.SourceRoleList = DALFactory.Role.List();
+            return View();
         }
 
         [HttpPost]
@@ -59,6 +67,21 @@ namespace MoreSuperManager.UI.Areas.Manager.Controllers
             {
                 return SettingHelper.Set(dict);
             }, Url.Action("Set"), Url.Action("Set"));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [RoleActionFilter]
+        public ActionResult RoleCloneOperater(int sourceRoleID, int targetRoleID)
+        {
+            return this.Operater(null, () =>
+            {
+                if (sourceRoleID == targetRoleID) return true;
+                return false;
+            }, () =>
+            {
+                return DALFactory.Role.Clone(sourceRoleID, targetRoleID);
+            }, Url.Action("RoleClone"), Url.Action("RoleClone"), "原始角色与目标角色不能相同！");
         }
     }
 }

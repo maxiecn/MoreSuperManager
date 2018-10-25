@@ -63,6 +63,10 @@ namespace MoreSuperManager.DAL
             string commandText = "select IdentityID, ParentID, MenuName, MenuUrl, MenuIcon, BelongModule, ActionList, MenuSort from T_Menu with(nolock) where ChannelCode=@ChannelCode order by MenuSort desc";
             return DataBaseHelper.ToEntityList<ViewTreeMenuModel>(commandText, new { ChannelCode = channelCode });
         }
+        public List<DBMenuModel> CloneList(string channelCode)
+        {
+            return DataBaseHelper.More<DBMenuModel>(new { ChannelCode = channelCode }, p => new { p.ChannelCode, p.ParentID, p.MenuName, p.MenuUrl, p.BelongModule, p.ActionList, p.MenuSort, p.MenuIcon }, p => p.ChannelCode == p.ChannelCode, null, true, TABLE_NAME);
+        }
         public List<ViewTreeMenuModel> All(string channelCode, string searchKey)
         {
             if (string.IsNullOrEmpty(searchKey))
