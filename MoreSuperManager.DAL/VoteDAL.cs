@@ -79,6 +79,9 @@ namespace MoreSuperManager.DAL
 
         public List<DBVoteFullModel> Page(string channelCode, string searchKey, int voteType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            channelCode = StringHelper.FilterSpecChar(channelCode);
+            searchKey = StringHelper.FilterSpecChar(searchKey);
+
             StringBuilder stringBuilder = new StringBuilder();
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
             {
@@ -101,14 +104,15 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, VoteTitle, VoteType, ChannelCode, (select TypeName from T_VoteType with(nolock) where T_VoteType.IdentityID=T.VoteType) as VoteTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add("@Field", "IdentityID, VoteTitle, VoteType, ChannelCode");
-            parameterList.Add("@TableName", "T_Vote");
-            parameterList.Add("@PrimaryKey", "IdentityID");
-            parameterList.Add("@PageIndex", pageIndex);
-            parameterList.Add("@PageSize", pageSize);
-            parameterList.Add("@WhereSql", whereSql);
-            parameterList.Add("@OrderSql", "IdentityID asc");
+            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, VoteTitle, VoteType, ChannelCode, (select TypeName from T_VoteType with(nolock) where T_VoteType.IdentityID=T.VoteType) as VoteTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, VoteTitle, VoteType, ChannelCode");
+            parameterList.Add(DataBaseParameterEnum.TableName, "T_Vote");
+            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
+            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
+            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
+            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
+            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
+            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
 
             return DataBaseHelper.ToEntityList<DBVoteFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }

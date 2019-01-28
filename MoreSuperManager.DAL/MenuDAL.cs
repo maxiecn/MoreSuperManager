@@ -69,6 +69,9 @@ namespace MoreSuperManager.DAL
         }
         public List<ViewTreeMenuModel> All(string channelCode, string searchKey)
         {
+            channelCode = StringHelper.FilterSpecChar(channelCode);
+            searchKey = StringHelper.FilterSpecChar(searchKey);
+
             if (string.IsNullOrEmpty(searchKey))
             {
                 string commandText = "select IdentityID, ParentID, MenuName, MenuUrl, MenuIcon, BelongModule, ActionList, MenuSort from T_Menu with(nolock) where ChannelCode=@ChannelCode order by MenuSort desc";

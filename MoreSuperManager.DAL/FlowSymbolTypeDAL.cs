@@ -51,6 +51,9 @@ namespace MoreSuperManager.DAL
 
         public List<DBFlowSymbolTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            channelCode = StringHelper.FilterSpecChar(channelCode);
+            searchKey = StringHelper.FilterSpecChar(searchKey);
+
             StringBuilder stringBuilder = new StringBuilder();
 
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
@@ -70,14 +73,15 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, TypeCode, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add("@Field", "IdentityID, TypeCode, TypeName, TypeSort, ChannelCode");
-            parameterList.Add("@TableName", "T_FlowSymbolType");
-            parameterList.Add("@PrimaryKey", "IdentityID");
-            parameterList.Add("@PageIndex", pageIndex);
-            parameterList.Add("@PageSize", pageSize);
-            parameterList.Add("@WhereSql", whereSql);
-            parameterList.Add("@OrderSql", "TypeSort desc");
+            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, TypeCode, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, TypeCode, TypeName, TypeSort, ChannelCode");
+            parameterList.Add(DataBaseParameterEnum.TableName, "T_FlowSymbolType");
+            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
+            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
+            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
+            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
+            parameterList.Add(DataBaseParameterEnum.OrderSql, "TypeSort desc");
+            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
 
             return DataBaseHelper.ToEntityList<DBFlowSymbolTypeFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }

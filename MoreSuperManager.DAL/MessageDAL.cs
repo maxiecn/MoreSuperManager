@@ -38,6 +38,8 @@ namespace MoreSuperManager.DAL
 
         public List<DBMessageModel> Page(string searchKey, int messageStatus, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            searchKey = StringHelper.FilterSpecChar(searchKey);
+
             StringBuilder stringBuilder = new StringBuilder();
 
             if (!string.IsNullOrEmpty(searchKey))
@@ -58,14 +60,15 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, ContactName, ContactTelphone, ContactEmail, MessageContent, ContactIP, MessageDate, MessageStatus");
-            parameterList.Add("@Field", "");
-            parameterList.Add("@TableName", "T_Message");
-            parameterList.Add("@PrimaryKey", "IdentityID");
-            parameterList.Add("@PageIndex", pageIndex);
-            parameterList.Add("@PageSize", pageSize);
-            parameterList.Add("@WhereSql", whereSql);
-            parameterList.Add("@OrderSql", "IdentityID asc");
+            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, ContactName, ContactTelphone, ContactEmail, MessageContent, ContactIP, MessageDate, MessageStatus");
+            parameterList.Add(DataBaseParameterEnum.Field, "");
+            parameterList.Add(DataBaseParameterEnum.TableName, "T_Message");
+            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
+            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
+            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
+            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
+            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
+            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
 
             return DataBaseHelper.ToEntityList<DBMessageModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }

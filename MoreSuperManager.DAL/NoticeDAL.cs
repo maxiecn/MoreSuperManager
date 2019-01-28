@@ -38,6 +38,7 @@ namespace MoreSuperManager.DAL
         }
         public List<DBNoticeFullModel> Page(string channelCode, string searchKey, int noticeType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            channelCode = StringHelper.FilterSpecChar(channelCode);
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -63,14 +64,15 @@ namespace MoreSuperManager.DAL
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
 
             Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add("@FieldSql", "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, ChannelCode, (select TypeName from T_NoticeType with(nolock) where T_NoticeType.IdentityID=T.NoticeType) as NoticeTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add("@Field", "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, ChannelCode");
-            parameterList.Add("@TableName", "T_Notice");
-            parameterList.Add("@PrimaryKey", "IdentityID");
-            parameterList.Add("@PageIndex", pageIndex);
-            parameterList.Add("@PageSize", pageSize);
-            parameterList.Add("@WhereSql", whereSql);
-            parameterList.Add("@OrderSql", "IdentityID asc");
+            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, ChannelCode, (select TypeName from T_NoticeType with(nolock) where T_NoticeType.IdentityID=T.NoticeType) as NoticeTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
+            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, NoticeType, NoticeTitle, NoticeDateTime, ChannelCode");
+            parameterList.Add(DataBaseParameterEnum.TableName, "T_Notice");
+            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
+            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
+            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
+            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
+            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
+            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
 
             return DataBaseHelper.ToEntityList<DBNoticeFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }

@@ -61,6 +61,9 @@ namespace MoreSuperManager.DAL
 
         public List<ViewTreeTopicTypeModel> All(string channelCode, string searchKey)
         {
+            channelCode = StringHelper.FilterSpecChar(channelCode);
+            searchKey = StringHelper.FilterSpecChar(searchKey);
+
             if (string.IsNullOrEmpty(searchKey))
             {
                 string commandText = "select IdentityID, ParentID, TypeName, TypeSort from T_TopicType with(nolock) where ChannelCode=@ChannelCode order by TypeSort desc";
