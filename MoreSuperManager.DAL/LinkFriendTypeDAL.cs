@@ -51,10 +51,10 @@ namespace MoreSuperManager.DAL
 
         public List<DBLinkFriendTypeFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            StringBuilder stringBuilder = new StringBuilder();
+
             channelCode = StringHelper.FilterSpecChar(channelCode);
             searchKey = StringHelper.FilterSpecChar(searchKey);
-
-            StringBuilder stringBuilder = new StringBuilder();
 
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
             {
@@ -68,20 +68,13 @@ namespace MoreSuperManager.DAL
                 stringBuilder.Append(searchKey);
                 stringBuilder.Append("%' ");
             }
+
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, TypeName, TypeSort, ChannelCode");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_LinkFriendType");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "TypeSort desc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBLinkFriendTypeFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBLinkFriendTypeFullModel>("", new DataBaseParameterItem("T_LinkFriendType", "IdentityID", pageIndex, pageSize, whereSql, "TypeSort desc")
+            {
+                FieldSql = "IdentityID, TypeName, TypeSort, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName",
+                Field = "IdentityID, TypeName, TypeSort, ChannelCode"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

@@ -33,9 +33,9 @@ namespace MoreSuperManager.DAL
 
         public List<DBAttachmentModel> Page(string searchKey, string attachmentType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
-            searchKey = StringHelper.FilterSpecChar(searchKey);
-
             StringBuilder stringBuilder = new StringBuilder();
+
+            searchKey = StringHelper.FilterSpecChar(searchKey);
 
             if (!string.IsNullOrEmpty(searchKey))
             {
@@ -50,19 +50,10 @@ namespace MoreSuperManager.DAL
             }
 
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, AttachmentType,AttachmentName,AttachmentSize,AttachmentPath,AttachmentDate");
-            parameterList.Add(DataBaseParameterEnum.Field, "");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_Attachment");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBAttachmentModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBAttachmentModel>("", new DataBaseParameterItem("T_Attachment", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID asc")
+            {
+                FieldSql = "IdentityID, AttachmentType,AttachmentName,AttachmentSize,AttachmentPath,AttachmentDate"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

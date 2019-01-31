@@ -63,7 +63,6 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBRoleModel>(null, p => new { p.IdentityID, p.RoleName, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
-
         public List<DBRoleModel> ChannelList(string channelCode)
         {
             return DataBaseHelper.More<DBRoleModel>(new { ChannelCode = channelCode }, p => new { p.IdentityID, p.RoleName }, p => p.ChannelCode == channelCode, null, true, TABLE_NAME);
@@ -71,10 +70,11 @@ namespace MoreSuperManager.DAL
 
         public List<DBRoleFullModel> Page(string channelCode, string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            StringBuilder stringBuilder = new StringBuilder();
+
             channelCode = StringHelper.FilterSpecChar(channelCode);
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
-            StringBuilder stringBuilder = new StringBuilder();
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-2")
             {
                 stringBuilder.Append(" ChannelCode = '");
@@ -87,20 +87,13 @@ namespace MoreSuperManager.DAL
                 stringBuilder.Append(searchKey);
                 stringBuilder.Append("%' ");
             }
+
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, RoleName, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, RoleName, ChannelCode");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_Role");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID desc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBRoleFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBRoleFullModel>("", new DataBaseParameterItem("T_Role", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID desc")
+            {
+                FieldSql = "IdentityID, RoleName, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName",
+                Field = "IdentityID, RoleName, ChannelCode"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

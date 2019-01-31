@@ -45,13 +45,11 @@ namespace MoreSuperManager.DAL
             List<int> dataList = StringHelper.ToList<int>(identityIDList, ",");
             return DataBaseHelper.Delete<DBUserModel>(null, p => dataList.Contains(p.IdentityID), TABLE_NAME);
         }
-
         public DBUserFullModel Select(string userCode, string userPassword)
         {
             string commandText = "select T_User.IdentityID, UserCode, RoleID, NickName, T_Role.RoleName, T_Role.MenuList, T_Role.ActionList, T_Role.ChannelCode from T_User with(nolock) left join T_Role with(nolock) on T_Role.IdentityID=T_User.RoleID where UserCode=@UserCode and UserPassword=@UserPassword";
             return DataBaseHelper.ToEntity<DBUserFullModel>(commandText, new { UserCode = userCode, UserPassword = userPassword });
         }
-
         public DBUserModel Select(int identityID)
         {
             return DataBaseHelper.Single<DBUserModel>(new { IdentityID = identityID }, p => new { p.IdentityID, p.UserCode, p.NickName }, p => p.IdentityID == p.IdentityID, TABLE_NAME);
@@ -63,9 +61,9 @@ namespace MoreSuperManager.DAL
 
         public List<DBUserFullModel> Page(string searchKey, int roleID, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
-            searchKey = StringHelper.FilterSpecChar(searchKey);
-
             StringBuilder stringBuilder = new StringBuilder();
+
+            searchKey = StringHelper.FilterSpecChar(searchKey);
 
             if (!string.IsNullOrEmpty(searchKey))
             {
@@ -80,19 +78,11 @@ namespace MoreSuperManager.DAL
             }
 
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, UserCode, NickName, RoleID, (select RoleName from T_Role with(nolock) where T_Role.IdentityID=T.RoleID) as RoleName");
-            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, UserCode, NickName, RoleID");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_User");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBUserFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBUserFullModel>("", new DataBaseParameterItem("T_User", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID asc")
+            {
+                FieldSql = "IdentityID, UserCode, NickName, RoleID, (select RoleName from T_Role with(nolock) where T_Role.IdentityID=T.RoleID) as RoleName",
+                Field = "IdentityID, UserCode, NickName, RoleID"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

@@ -40,11 +40,13 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.More<DBIndexMapperModel>(null, p => new { p.IdentityID, p.IndexType, p.IndexID, p.ChannelCode }, null, null, true, TABLE_NAME);
         }
+
         public List<DBIndexMapperFullModel> Page(string channelCode, int indexType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            StringBuilder stringBuilder = new StringBuilder();
+
             channelCode = StringHelper.FilterSpecChar(channelCode);
 
-            StringBuilder stringBuilder = new StringBuilder();
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
             {
                 stringBuilder.Append(" ChannelCode = '");
@@ -57,20 +59,13 @@ namespace MoreSuperManager.DAL
                 stringBuilder.Append(indexType);
                 stringBuilder.Append(" and ");
             }
+
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, IndexType, IndexID, MapperID, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, IndexType, IndexID, MapperID, ChannelCode");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_IndexMapper");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID desc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBIndexMapperFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBIndexMapperFullModel>("", new DataBaseParameterItem("T_IndexMapper", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID desc")
+            {
+                FieldSql = "IdentityID, IndexType, IndexID, MapperID, ChannelCode, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName",
+                Field = "IdentityID, IndexType, IndexID, MapperID, ChannelCode"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

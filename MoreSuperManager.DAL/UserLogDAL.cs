@@ -28,9 +28,9 @@ namespace MoreSuperManager.DAL
 
         public List<DBUserLogModel> Page(string searchKey, int loginStatus, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
-            searchKey = StringHelper.FilterSpecChar(searchKey);
-
             StringBuilder stringBuilder = new StringBuilder();
+
+            searchKey = StringHelper.FilterSpecChar(searchKey);
 
             if (!string.IsNullOrEmpty(searchKey))
             {
@@ -47,19 +47,10 @@ namespace MoreSuperManager.DAL
             }
 
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, UserCode, LoginIP, LoginDate, LoginStatus");
-            parameterList.Add(DataBaseParameterEnum.Field, "");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_UserLog");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBUserLogModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBUserLogModel>("", new DataBaseParameterItem("T_UserLog", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID asc")
+            {
+                FieldSql = "IdentityID, UserCode, LoginIP, LoginDate, LoginStatus"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

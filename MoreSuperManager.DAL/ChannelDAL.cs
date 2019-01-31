@@ -48,11 +48,13 @@ namespace MoreSuperManager.DAL
         {
             return List().Where(p => !string.IsNullOrEmpty(p.ChannelCode) && p.ChannelCode != "-1").ToList();
         }
+
         public List<DBChannelModel> Page(string searchKey, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            StringBuilder stringBuilder = new StringBuilder();
+
             searchKey = StringHelper.FilterSpecChar(searchKey);
 
-            StringBuilder stringBuilder = new StringBuilder();
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(" ChannelCode like '%");
@@ -61,20 +63,12 @@ namespace MoreSuperManager.DAL
                 stringBuilder.Append(searchKey);
                 stringBuilder.Append("%' ");
             }
+
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, ChannelCode, ChannelName, ChannelSort");
-            parameterList.Add(DataBaseParameterEnum.Field, "");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_Channel");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "ChannelSort desc, IdentityID desc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBChannelModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBChannelModel>("", new DataBaseParameterItem("T_Channel", "IdentityID", pageIndex, pageSize, whereSql, "ChannelSort desc, IdentityID desc")
+            {
+                FieldSql = "IdentityID, ChannelCode, ChannelName, ChannelSort"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

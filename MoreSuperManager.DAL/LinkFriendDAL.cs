@@ -39,10 +39,10 @@ namespace MoreSuperManager.DAL
 
         public List<DBLinkFriendFullModel> Page(string channelCode, string searchKey, int linkFriendType, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            StringBuilder stringBuilder = new StringBuilder();
+
             channelCode = StringHelper.FilterSpecChar(channelCode);
             searchKey = StringHelper.FilterSpecChar(searchKey);
-
-            StringBuilder stringBuilder = new StringBuilder();
 
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
             {
@@ -63,19 +63,11 @@ namespace MoreSuperManager.DAL
             }
 
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, LinkFriendType, LinkFriendCoverImageUrl, LinkFriendName, LinkFriendUrl, LinkFriendSort, ChannelCode, (select TypeName from T_LinkFriendType with(nolock) where T_LinkFriendType.IdentityID=T.LinkFriendType) as LinkFriendTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, LinkFriendType, LinkFriendCoverImageUrl, LinkFriendName, LinkFriendUrl, LinkFriendSort, ChannelCode");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_LinkFriend");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBLinkFriendFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBLinkFriendFullModel>("", new DataBaseParameterItem("T_LinkFriend", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID asc")
+            {
+                FieldSql = "IdentityID, LinkFriendType, LinkFriendCoverImageUrl, LinkFriendName, LinkFriendUrl, LinkFriendSort, ChannelCode, (select TypeName from T_LinkFriendType with(nolock) where T_LinkFriendType.IdentityID=T.LinkFriendType) as LinkFriendTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName",
+                Field = "IdentityID, LinkFriendType, LinkFriendCoverImageUrl, LinkFriendName, LinkFriendUrl, LinkFriendSort, ChannelCode"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

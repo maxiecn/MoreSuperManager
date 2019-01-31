@@ -29,7 +29,6 @@ namespace MoreSuperManager.DAL
         {
             return DataBaseHelper.Update<DBMessageModel>(new { IdentityID = identityID, MessageStatus = messageStatus }, p => p.IdentityID == p.IdentityID, p => p.IdentityID, TABLE_NAME);
         }
-
         public DBMessageFullModel FullSelect(int identityID)
         {
             string commandText = "select T_Message.IdentityID, ContactName, ContactTelphone, ContactEmail, MessageContent, ContactIP, MessageDate, MessageStatus, T_MessageReply.ReplyContent,T_MessageReply.UserCode,T_MessageReply.NickName,T_MessageReply.ReplyDate from T_Message with(nolock) left join T_MessageReply with(nolock) on T_Message.IdentityID=T_MessageReply.MessageID where T_Message.IdentityID=@IdentityID";
@@ -38,9 +37,9 @@ namespace MoreSuperManager.DAL
 
         public List<DBMessageModel> Page(string searchKey, int messageStatus, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
-            searchKey = StringHelper.FilterSpecChar(searchKey);
-
             StringBuilder stringBuilder = new StringBuilder();
+
+            searchKey = StringHelper.FilterSpecChar(searchKey);
 
             if (!string.IsNullOrEmpty(searchKey))
             {
@@ -58,19 +57,10 @@ namespace MoreSuperManager.DAL
             }
 
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, ContactName, ContactTelphone, ContactEmail, MessageContent, ContactIP, MessageDate, MessageStatus");
-            parameterList.Add(DataBaseParameterEnum.Field, "");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_Message");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBMessageModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBMessageModel>("", new DataBaseParameterItem("T_Message", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID asc")
+            {
+                FieldSql = "IdentityID, ContactName, ContactTelphone, ContactEmail, MessageContent, ContactIP, MessageDate, MessageStatus"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }

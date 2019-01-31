@@ -44,10 +44,10 @@ namespace MoreSuperManager.DAL
 
         public List<DBTopicFullModel> Page(string channelCode, string searchKey, int topicType, int topicPositionType, int topicStatus, int pageIndex, int pageSize, ref int totalCount, ref int pageCount)
         {
+            StringBuilder stringBuilder = new StringBuilder();
+
             channelCode = StringHelper.FilterSpecChar(channelCode);
             searchKey = StringHelper.FilterSpecChar(searchKey);
-
-            StringBuilder stringBuilder = new StringBuilder();
 
             if (!string.IsNullOrEmpty(channelCode) && channelCode != "-1")
             {
@@ -55,12 +55,10 @@ namespace MoreSuperManager.DAL
                 stringBuilder.Append(channelCode);
                 stringBuilder.Append("' and ");
             }
-            // 如果需要筛选状态
             if (topicStatus != -1)
             {
                 stringBuilder.Append(string.Format(" TopicStatus = {0} and ", topicStatus));
             }
-
             if (!string.IsNullOrEmpty(searchKey))
             {
                 stringBuilder.Append(string.Format(" TopicTitle like '%{0}%' ", searchKey));
@@ -80,19 +78,11 @@ namespace MoreSuperManager.DAL
             }
 
             string whereSql = stringBuilder.ToString().TrimEnd().TrimEnd(new char[] { 'a', 'n', 'd' });
-
-            Dictionary<string, object> parameterList = new Dictionary<string, object>();
-            parameterList.Add(DataBaseParameterEnum.FieldSql, "IdentityID, TopicType, PositionTypeList, TopicTitle, TopicCoverImageUrl, TopicStatus, TopicUserCode, TopicVisitNum, TopicDateTime, ChannelCode, (select TypeName from T_TopicType with(nolock) where T_TopicType.IdentityID=T.TopicType) as TopicTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName");
-            parameterList.Add(DataBaseParameterEnum.Field, "IdentityID, TopicType, PositionTypeList, TopicTitle, TopicCoverImageUrl, TopicStatus, TopicUserCode, TopicVisitNum, TopicDateTime, ChannelCode");
-            parameterList.Add(DataBaseParameterEnum.TableName, "T_Topic");
-            parameterList.Add(DataBaseParameterEnum.PrimaryKey, "IdentityID");
-            parameterList.Add(DataBaseParameterEnum.PageIndex, pageIndex);
-            parameterList.Add(DataBaseParameterEnum.PageSize, pageSize);
-            parameterList.Add(DataBaseParameterEnum.WhereSql, whereSql);
-            parameterList.Add(DataBaseParameterEnum.OrderSql, "IdentityID asc");
-            parameterList.Add(DataBaseParameterEnum.JoinSql, "");
-
-            return DataBaseHelper.ToEntityList<DBTopicFullModel>("", parameterList, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
+            return DataBaseHelper.ToEntityList<DBTopicFullModel>("", new DataBaseParameterItem("T_Topic", "IdentityID", pageIndex, pageSize, whereSql, "IdentityID asc")
+            {
+                FieldSql = "IdentityID, TopicType, PositionTypeList, TopicTitle, TopicCoverImageUrl, TopicStatus, TopicUserCode, TopicVisitNum, TopicDateTime, ChannelCode, (select TypeName from T_TopicType with(nolock) where T_TopicType.IdentityID=T.TopicType) as TopicTypeName, (select ChannelName from T_Channel with(nolock) where T_Channel.ChannelCode=T.ChannelCode) as ChannelName",
+                Field = "IdentityID, TopicType, PositionTypeList, TopicTitle, TopicCoverImageUrl, TopicStatus, TopicUserCode, TopicVisitNum, TopicDateTime, ChannelCode"
+            }, ref pageCount, ref totalCount, null, "PageCount", "TotalCount");
         }
     }
 }
