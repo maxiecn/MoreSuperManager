@@ -774,7 +774,7 @@ namespace Helper.Core.Library
             if (!string.IsNullOrEmpty(parameterPageCountName)) outParameterList.Add("@" + parameterPageCountName, 0);
             if (!string.IsNullOrEmpty(parameterTotalCountName)) outParameterList.Add("@" + parameterTotalCountName, 0);
 
-            if (string.IsNullOrEmpty(commandText) && DataBaseType == DataBaseTypeEnum.Sql)
+            if (string.IsNullOrEmpty(commandText) && dataBaseType == DataBaseTypeEnum.Sql)
             {
                 commandText = SqlDataBaseItem.PaginationSql;
             }
@@ -1219,7 +1219,7 @@ namespace Helper.Core.Library
             if (!string.IsNullOrEmpty(parameterPageCountName)) outParameterList.Add("@" + parameterPageCountName, 0);
             if (!string.IsNullOrEmpty(parameterTotalCountName)) outParameterList.Add("@" + parameterTotalCountName, 0);
 
-            if (string.IsNullOrEmpty(commandText) && DataBaseType == DataBaseTypeEnum.Sql)
+            if (string.IsNullOrEmpty(commandText) && dataBaseType == DataBaseTypeEnum.Sql)
             {
                 commandText = SqlDataBaseItem.PaginationSql;
             }
