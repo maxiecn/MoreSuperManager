@@ -774,7 +774,7 @@ namespace Helper.Core.Library
             if (!string.IsNullOrEmpty(parameterPageCountName)) outParameterList.Add("@" + parameterPageCountName, 0);
             if (!string.IsNullOrEmpty(parameterTotalCountName)) outParameterList.Add("@" + parameterTotalCountName, 0);
 
-            if (string.IsNullOrEmpty(commandText) && dataBaseType == DataBaseTypeEnum.Sql)
+            if (string.IsNullOrEmpty(commandText) && DataBaseType == DataBaseTypeEnum.Sql)
             {
                 commandText = SqlDataBaseItem.PaginationSql;
             }
@@ -1219,7 +1219,7 @@ namespace Helper.Core.Library
             if (!string.IsNullOrEmpty(parameterPageCountName)) outParameterList.Add("@" + parameterPageCountName, 0);
             if (!string.IsNullOrEmpty(parameterTotalCountName)) outParameterList.Add("@" + parameterTotalCountName, 0);
 
-            if (string.IsNullOrEmpty(commandText) && dataBaseType == DataBaseTypeEnum.Sql)
+            if (string.IsNullOrEmpty(commandText) && DataBaseType == DataBaseTypeEnum.Sql)
             {
                 commandText = SqlDataBaseItem.PaginationSql;
             }
@@ -1826,53 +1826,99 @@ namespace Helper.Core.Library
     }
     public class DataBaseParameterItem
     {
+        private string _fieldSql;
+        private string _field;
+        private string _tableName;
+        private string _primaryKey;
+        private int _pageIndex;
+        private int _pageSize;
+        private string _whereSql;
+        private string _orderSql;
+        private string _joinSql;
+
         public DataBaseParameterItem() { }
         public DataBaseParameterItem(string tableName, string primaryKey, int pageIndex, int pageSize, string whereSql = "", string orderSql = "", string joinSql = "")
         {
-            this.TableName = tableName;
-            this.PrimaryKey = primaryKey;
-            this.PageIndex = pageIndex;
-            this.PageSize = pageSize;
-            this.WhereSql = whereSql;
-            this.OrderSql = orderSql;
-            this.JoinSql = joinSql;
+            this._tableName = tableName;
+            this._primaryKey = primaryKey;
+            this._pageIndex = pageIndex;
+            this._pageSize = pageSize;
+            this._whereSql = whereSql;
+            this._orderSql = orderSql;
+            this._joinSql = joinSql;
         }
         /// <summary>
         /// 查询语句，表连接查询时，主表用 T 代替
         /// </summary>
-        public string FieldSql { get; set; }
+        public string FieldSql
+        {
+            get { return this._fieldSql; }
+            set { this._fieldSql = value; }
+        }
         /// <summary>
         /// 查询语句，值为空时，与 FieldSql 字段相同
         /// </summary>
-        public string Field { get; set; }
+        public string Field
+        {
+            get { return this._field; }
+            set { this._field = value; }
+        }
         /// <summary>
         /// 表名称
         /// </summary>
-        public string TableName { get; set; }
+        public string TableName
+        {
+            get { return this._tableName; }
+            set { this._tableName = value; }
+        }
         /// <summary>
         /// 主键名称
         /// </summary>
-        public string PrimaryKey { get; set; }
+        public string PrimaryKey
+        {
+            get { return this._primaryKey; }
+            set { this._primaryKey = value; }
+        }
         /// <summary>
         /// 页索引，从 1 开始
         /// </summary>
-        public int PageIndex { get; set; }
+        public int PageIndex
+        {
+            get { return this._pageIndex; }
+            set { this._pageIndex = value; }
+        }
         /// <summary>
         /// 页大小
         /// </summary>
-        public int PageSize { get; set; }
+        public int PageSize
+        {
+            get { return this._pageSize; }
+            set { this._pageSize = value; }
+        }
         /// <summary>
         /// Where 语句
         /// </summary>
-        public string WhereSql { get; set; }
+        public string WhereSql
+        {
+            get { return this._whereSql; }
+            set { this._whereSql = value; }
+        }
         /// <summary>
         /// Order 语句
         /// </summary>
-        public string OrderSql { get; set; }
+        public string OrderSql
+        {
+            get { return this._orderSql; }
+            set { this._orderSql = value; }
+        }
         /// <summary>
         /// 表连接语句 例： inner join B on A.XX=B.XX
         /// </summary>
-        public string JoinSql { get; set; }
+        public string JoinSql
+        {
+            get { return this._joinSql; }
+            set { this._joinSql = value; }
+        }
     }
 
     #region SqlServer 分页查询语句
