@@ -381,7 +381,7 @@ function AppendMenuItem(id, title, url) {
         // 创建 Iframe 
         $("#iframeContainer").append("<iframe id=\"iframe_item_" + id + "\" data-id=\"" + id  + "\" src=\"" + url + "\" class=\"frame-iframe\"></iframe>");
         // 追加选项卡数据
-        $("#tabItemList").append("<li class=\"active\" data-id=\"" + id + "\" data-url=\"" + url + "\" id=\"tab_item_" + id + "\"><a>" + title + "<i class=\"glyphicon glyphicon-remove\" data-id=\"" + id + "\" id=\"tab_item_icon_" + id + "\"></i></a></li>");
+        $("#tabItemList").append("<li class=\"active\" data-id=\"" + id + "\" data-url=\"" + url + "\" id=\"tab_item_" + id + "\"><a>" + title + "<i class=\"glyphicon glyphicon-remove-sign\" style=\"font-size:12px;padding-left:3px;\" data-id=\"" + id + "\" id=\"tab_item_icon_" + id + "\"></i></a></li>");
         // 设置当前选项卡为选中状态
         SetTabItemListActiveByID(id);
     }
