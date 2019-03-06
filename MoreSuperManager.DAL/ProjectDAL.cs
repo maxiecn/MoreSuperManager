@@ -12,6 +12,7 @@ namespace MoreSuperManager.DAL
     {
         private const string TABLE_NAME = "T_Project";
 
+        /* 新增数据时 RoleList 字段应该根据节点编号和节点步骤编号从 FlowSep 表取中取出，增加 RoleList 是为了查询时方便 */
         public bool Operater(DBProjectModel model, int flowStepID = 0)
         {
             if (model.IdentityID == 0)
