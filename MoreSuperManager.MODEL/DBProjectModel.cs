@@ -32,5 +32,9 @@ namespace MoreSuperManager.MODEL
         /// 当前流程节点
         /// </summary>
         public int FlowStepID { get; set; }
+        /// <summary>
+        /// 角色列表
+        /// </summary>
+        public string RoleList { get; set; }
     }
 }
